@@ -1,0 +1,17 @@
+{
+    "services": {
+        "openApiDocs": {
+            "factory": {
+                "class": "../openApi/openApi",
+                "method": "makeOpenApiDocs"
+            },
+            "arguments": ["%cwd%", "@logger"]
+        },
+        "GetDocs": {
+            "class": "../openApi/openApi",
+            "main": "GetDocsHandler",
+            "tags": [{ "name": "nats.handler" }],
+            "arguments": ["%config.SERVICE_NAME%", "@openApiDocs"]
+        }
+    }
+}

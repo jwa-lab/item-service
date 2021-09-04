@@ -1,0 +1,24 @@
+{
+    "services": {
+        "pgsql": {
+            "factory": {
+                "class": "./services/pgSql/pgSqlFactory",
+                "method": "makePgSQLClient"
+            },
+            "arguments": [
+                "%config.PGSQL_HOST%",
+                "%config.PGSQL_USER%",
+                "%config.PGSQL_PASSWORD%",
+                "%config.PGSQL_DATABASE%"
+            ]
+        },
+        "itemRepository": {
+            "class": "./repositories/ItemRepository",
+            "arguments": ["@pgsql"]
+        }
+    },
+    "imports": [
+        { "resource": "./natsHandlers/createItem/createItem.json" },
+        { "resource": "./natsHandlers/getItem/getItem.json" }
+    ]
+}
