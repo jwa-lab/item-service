@@ -1,9 +1,9 @@
-{
+module.exports = {
     "services": {
-        "pgsql": {
+        "knex": {
             "factory": {
-                "class": "./services/pgSql/pgSqlFactory",
-                "method": "makePgSQLClient"
+                "class": "./services/knex/knexFactory",
+                "method": "makeKnexClient"
             },
             "arguments": [
                 "%config.PGSQL_HOST%",
@@ -13,8 +13,8 @@
             ]
         },
         "itemRepository": {
-            "class": "./repositories/ItemRepository",
-            "arguments": ["@pgsql"]
+            "class": "./repositories/KnexItemRepository",
+            "arguments": ["@knex"]
         }
     },
     "imports": [

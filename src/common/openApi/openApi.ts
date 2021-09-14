@@ -7,23 +7,10 @@ import { PrivateHandler } from "../NatsRunner/Handlers";
 
 type OpenAPIDocs = Pick<OpenAPIV3.Document, "paths" | "components" | "tags">;
 
-export function makeOpenApiDocs(cwd: string, logger: Logger): Promise<void> {
-    const docs = String(fs.readFileSync(`${cwd}/openapi-docs.json`));
-    let jsonDocs;
-
-    try {
-        jsonDocs = JSON.parse(docs);
-    } catch (err) {
-        logger.error("Invalid docs");
-        throw new Error("Invalid docs");
-    }
-
-    return jsonDocs;
-}
-
 export class GetDocsHandler extends PrivateHandler {
     readonly subject = "docs";
     readonly serviceScopedSubject = false;
+    private jsonDocs: OpenAPIDocs;
 
     getSubscriptionOptions(): SubscriptionOptions {
         return {
@@ -32,13 +19,25 @@ export class GetDocsHandler extends PrivateHandler {
     }
 
     constructor(
+        private cwd: string,
         private SERVICE_NAME: string,
-        private openApiDocs: OpenAPIDocs
+        private logger: Logger
     ) {
         super();
+
+        let jsonDocs;
+   
+        try {
+            const docs = String(fs.readFileSync(`${this.cwd}/openapi-docs.json`));
+            jsonDocs = JSON.parse(docs);
+        } catch (err) {
+            this.logger.warning("Unable to load openapi docs.");
+        }
+    
+        this.jsonDocs = jsonDocs;
     }
 
     async handle(): Promise<OpenAPIDocs> {
-        return this.openApiDocs;
+        return this.jsonDocs;
     }
 }

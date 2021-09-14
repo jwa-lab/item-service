@@ -1,13 +1,11 @@
 import { knex, Knex } from "knex";
 
-export type PgSQL = Knex;
-
-export function makePgSQLClient(
+export function makeKnexClient(
     PGSQL_HOST: string,
     PGSQL_USER: string,
     PGSQL_PASSWORD: string,
     PGSQL_DATABASE: string
-): PgSQL {
+): Knex {
     return knex({
         client: "pg",
         connection: {

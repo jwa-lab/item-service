@@ -3,7 +3,7 @@ import { AirlockMessage, Message } from "./Messages";
 import { AIRLOCK_VERBS } from "./NatsRunner";
 
 abstract class Handler {
-    abstract subject: string;
+    readonly abstract subject: string;
 
     getSubscriptionOptions(): SubscriptionOptions {
         return {};
@@ -17,7 +17,7 @@ export abstract class PrivateHandler extends Handler {
 }
 
 export abstract class AirlockHandler extends Handler {
-    abstract verb: AIRLOCK_VERBS;
+    readonly abstract verb: AIRLOCK_VERBS;
 
     abstract handle(msg: AirlockMessage): Promise<unknown>;
 }

@@ -2,10 +2,9 @@ FROM node:14-alpine
 
 WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .
-COPY LICENSE .
-COPY tsconfig.json .
+COPY seeds ./seeds
+COPY src ./src
+COPY package.json package-lock.json LICENSE tsconfig.json ./
 
 RUN npm install
 RUN npm run build

@@ -1,14 +1,13 @@
 import * as winston from "winston";
-import { Logger } from "./Logger";
 import { WinstonLogger } from "./WinstonLogger";
 
 export function makeWinstonLogger(
-    LOGGING_FORMAT: string,
-    SERVICE_NAME: string
-): Logger {
+    loggingFormat: string,
+    serviceName: string
+): WinstonLogger {
     let transport;
 
-    if (LOGGING_FORMAT.toLocaleLowerCase() === "cli") {
+    if (loggingFormat.toLocaleLowerCase() === "cli") {
         transport = new winston.transports.Console({
             format: winston.format.combine(winston.format.cli())
         });
@@ -17,7 +16,7 @@ export function makeWinstonLogger(
     }
 
     return new WinstonLogger(
-        SERVICE_NAME,
+        serviceName,
         winston.createLogger({
             level: "debug",
             transports: transport,

@@ -1,10 +1,10 @@
 import { connect, NatsConnection, Subscription, JSONCodec, Codec } from "nats";
 import {
     ContainerBuilder,
-    JsonFileLoader,
+    JsFileLoader,
     Parameter
 } from "node-dependency-injection";
-import { WinstonLogger } from "../logger/WinstonLogger";
+import { Logger } from "../logger/Logger";
 import { AirlockHandler, PrivateHandler } from "./Handlers";
 import { AirlockMessage, Message } from "./Messages";
 
@@ -27,7 +27,7 @@ export default class NatsRunner {
     private readonly jsonCodec: Codec<unknown>;
 
     private natsConnection!: NatsConnection;
-    protected logger!: WinstonLogger;
+    protected logger!: Logger;
     private config!: Record<string, unknown>;
 
     constructor(cwd: string) {
@@ -46,7 +46,7 @@ export default class NatsRunner {
             this.registerSignalHandlers();
         } catch (e) {
             console.error(e);
-            this.logger.error(e);
+            this.logger.error(e.message);
             process.exit(1);
         }
     }
@@ -72,10 +72,10 @@ export default class NatsRunner {
         });
 
         this.container.setParameter("cwd", this.cwd);
-        const loader = new JsonFileLoader(this.container);
+        const loader = new JsFileLoader(this.container);
 
-        loader.load(`${this.cwd}/common/NatsRunner/di.json`);
-        loader.load(`${this.cwd}/di.json`);
+        loader.load(`${this.cwd}/common/NatsRunner/di`);
+        loader.load(`${this.cwd}/di`);
 
         this.logger = this.container.get("logger");
 
