@@ -77,9 +77,9 @@ export default class NatsRunner {
         loader.load(`${this.cwd}/common/NatsRunner/di`);
         loader.load(`${this.cwd}/di`);
 
-        this.logger = this.container.get("logger");
+        this.logger = this.container.get<Logger>("logger");
 
-        this.container.logger = this.logger;
+        this.container.logger = { warn: (msg) => this.logger.warning(msg) };
 
         this.logger.debug("NatsRunner container initialized");
     }

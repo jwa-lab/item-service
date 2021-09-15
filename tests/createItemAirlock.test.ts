@@ -32,6 +32,21 @@ describe("Given CreateItem Airlock Handler", () => {
             ).rejects.toThrow('"name" is required');
         });
 
+        it("Then throws an error when name is too long", () => {
+            expect(
+                createItemAirlockHandler.handle({
+                    body: {
+                        name: new Array(101).fill("a").join(""),
+                        total_quantity: 10,
+                        data: {},
+                        is_frozen: false
+                    }
+                })
+            ).rejects.toThrow(
+                '"name" length must be less than or equal to 100 characters long'
+            );
+        });
+
         it("Then throws an error when available_quantity is missing", () => {
             expect(
                 createItemAirlockHandler.handle({

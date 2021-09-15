@@ -4,7 +4,6 @@ export interface Logger {
     crit(message: string): void;
     error(message: string): void;
     warning(message: string): void;
-    warn(message: string): void;
     notice(message: string): void;
     info(message: string): void;
     debug(message: string): void;

@@ -26,10 +26,6 @@ export class WinstonLogger implements Logger {
         this.log("error", message);
     }
 
-    public warn(message: string): void {
-        this.warning(message);
-    }
-
     public warning(message: string): void {
         this.log("warning", message);
     }

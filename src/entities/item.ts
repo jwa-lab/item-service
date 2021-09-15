@@ -27,7 +27,7 @@ export class Item {
 
 export const itemSchema = Joi.object({
     item_id: Joi.number().min(1),
-    name: Joi.string().required(),
+    name: Joi.string().max(100).required(),
     available_quantity: Joi.number().min(0).required(),
     total_quantity: Joi.number().min(0).required(),
     is_frozen: Joi.boolean().required(),
