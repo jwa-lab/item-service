@@ -46,7 +46,7 @@ export default class NatsRunner {
             this.registerSignalHandlers();
         } catch (e) {
             console.error(e);
-            this.logger.error(e.message);
+            this.logger.error((e as Error).message);
             process.exit(1);
         }
     }
@@ -162,10 +162,10 @@ export default class NatsRunner {
 
                 message.respond(this.jsonCodec.encode(response));
             } catch (err) {
-                this.logger.error(err.message);
+                this.logger.error((err as Error).message);
                 message.respond(
                     this.jsonCodec.encode({
-                        error: err.message
+                        error: (err as Error).message
                     })
                 );
             }
@@ -182,10 +182,10 @@ export default class NatsRunner {
 
                 message.respond(this.jsonCodec.encode(response));
             } catch (err) {
-                this.logger.error(err.message);
+                this.logger.error((err as Error).message);
                 message.respond(
                     this.jsonCodec.encode({
-                        error: err.message
+                        error: (err as Error).message
                     })
                 );
             }
