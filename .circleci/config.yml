@@ -3,17 +3,22 @@ orbs:
     node: circleci/node@4.7.0
 jobs:
     lint:
-        executor: node/default
+        executor:
+            name: node/default
+            tag: "16.6"
         steps:
             - checkout
             - run: npm install
-            - run: npm run lint
+            - run: npm run lint --ws
     test:
-        executor: node/default
+        executor:
+            name: node/default
+            tag: "16.6"
         steps:
             - checkout
             - run: npm install
-            - run: npm run test
+            - run: npm run build -w common
+            - run: npm run test --ws --if-present
     docker-push:
         machine: true
         steps:

@@ -1,0 +1,39 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+declare -a tags=(
+    $(git rev-parse --verify HEAD --short)
+    $(node -p -e "require('./package.json').version")
+)
+
+declare name=$(node -p -e "require('./package.json').name")
+
+function docker-build() {
+    docker build . -t jwalab/$name
+}
+
+function docker-tag() {
+    for tag in ${tags[@]}
+    do
+        docker tag jwalab/$name jwalab/$name:$tag
+    done
+}
+
+function docker-push() {
+    docker push jwalab/$name
+    for tag in ${tags[@]}
+    do
+        docker push jwalab/$name:$tag
+    done
+}
+
+function knex() {
+    npx knex "${@:1}"
+}
+
+function deploy-warehouse() {
+    node tezos/deploy.js
+}
+
+"$@"
