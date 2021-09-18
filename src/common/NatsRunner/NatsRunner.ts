@@ -4,7 +4,7 @@ import {
     JsFileLoader,
     Parameter
 } from "node-dependency-injection";
-import { Logger } from "../logger/Logger";
+import { Logger } from "../Logger/Logger";
 import { AirlockHandler, PrivateHandler } from "./Handlers";
 import { AirlockMessage, Message } from "./Messages";
 
@@ -41,6 +41,7 @@ export default class NatsRunner {
             await this.getConfig();
             this.initContainer();
             await this.initNats();
+            await this.startPlugins();
             await this.registerNatsHandlers();
 
             this.registerSignalHandlers();
@@ -95,6 +96,18 @@ export default class NatsRunner {
         this.logger.debug(
             `NatsRunner connected to NATS ${this.config.NATS_URL}`
         );
+    }
+
+    private async startPlugins() {
+        const ids = Array.from(
+            this.container.findTaggedServiceIds("runner.plugin").keys()
+        );
+
+        await Promise.all(ids.map(async (id) => {
+            const plugin = this.container.get(id);
+
+            await plugin.start();
+        }));
     }
 
     private async registerNatsHandlers() {

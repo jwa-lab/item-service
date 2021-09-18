@@ -1,5 +1,6 @@
 import { CreateItemHandler } from "../src/natsHandlers/createItem/CreateItem";
 import logger from "./utils/mockLogger";
+import messageBus from "./utils/mockMessageBus";
 
 describe("Given CreateItem  Handler", () => {
     let createItemHandler;
@@ -13,7 +14,8 @@ describe("Given CreateItem  Handler", () => {
         createItemHandler = new CreateItemHandler(
             "test-service",
             logger,
-            itemRepository
+            itemRepository,
+            messageBus
         );
     });
 
@@ -29,7 +31,7 @@ describe("Given CreateItem  Handler", () => {
                     total_quantity: 10,
                     available_quantity: 10,
                     data: {},
-                    is_frozen: false
+                    frozen: false
                 }
             });
         });
@@ -40,7 +42,7 @@ describe("Given CreateItem  Handler", () => {
                 total_quantity: 10,
                 available_quantity: 10,
                 data: {},
-                is_frozen: false
+                frozen: false
             });
         });
 
@@ -48,6 +50,13 @@ describe("Given CreateItem  Handler", () => {
             expect(response).toEqual({
                 item_id: 1
             });
+        });
+
+        it("Then publishes a new ItemCreated event", () => {
+            expect(messageBus.publish.mock.calls[0]).toEqual([
+                "ItemCreated",
+                1
+            ]);
         });
     });
 });

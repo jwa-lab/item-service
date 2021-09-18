@@ -3,8 +3,9 @@
 export SERVICE_NAME=item-service
 export NATS_URL=nats://localhost:4222
 export TEZOS_RPC_URI=http://localhost:20000
-export WAREHOUSE_TEZOS_SECRET_KEY=edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq  
-export WAREHOUSE_TEZOS_PUBLIC_KEY_HASH=tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb
+export TEZOS_SECRET_KEY=edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq  
+export TEZOS_PUBLIC_KEY_HASH=tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb
+export WAREHOUSE_CONTRACT_ADDRESS=KT1WAdgoGm6A7V6cuhodV9QLqUHJSqUkEkEE
 export LOGGING_FORMAT=cli
 export PGSQL_HOST=localhost
 export PGSQL_USER=jwa
@@ -53,6 +54,10 @@ function docker-push() {
 
 function knex() {
     npx knex "${@:1}"
+}
+
+function deploy-warehouse() {
+    node tezos/deploy.js
 }
 
 "$@"

@@ -26,7 +26,7 @@ describe("Given CreateItem Airlock Handler", () => {
                         total_quantity: 10,
                         available_quantity: 10,
                         data: {},
-                        is_frozen: false
+                        frozen: false
                     }
                 })
             ).rejects.toThrow('"name" is required');
@@ -39,7 +39,7 @@ describe("Given CreateItem Airlock Handler", () => {
                         name: new Array(101).fill("a").join(""),
                         total_quantity: 10,
                         data: {},
-                        is_frozen: false
+                        frozen: false
                     }
                 })
             ).rejects.toThrow(
@@ -54,7 +54,7 @@ describe("Given CreateItem Airlock Handler", () => {
                         name: "hello",
                         total_quantity: 10,
                         data: {},
-                        is_frozen: false
+                        frozen: false
                     }
                 })
             ).rejects.toThrow('"available_quantity" is required');
@@ -68,7 +68,7 @@ describe("Given CreateItem Airlock Handler", () => {
                         total_quantity: 10,
                         available_quantity: -1,
                         data: {},
-                        is_frozen: false
+                        frozen: false
                     }
                 })
             ).rejects.toThrow(
@@ -86,7 +86,7 @@ describe("Given CreateItem Airlock Handler", () => {
                         data: {
                             test: true
                         },
-                        is_frozen: false
+                        frozen: false
                     }
                 })
             ).rejects.toThrow('"data.test" must be a string');
@@ -111,7 +111,7 @@ describe("Given CreateItem Airlock Handler", () => {
                     total_quantity: 10,
                     available_quantity: 10,
                     data: {},
-                    is_frozen: false
+                    frozen: false
                 }
             });
         });

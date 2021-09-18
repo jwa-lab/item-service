@@ -10,7 +10,7 @@ module.exports = {
                 table.string("name", 100).notNullable();
                 table.integer("total_quantity").notNullable();
                 table.integer("available_quantity").notNullable();
-                table.boolean("is_frozen").notNullable();
+                table.boolean("frozen").notNullable();
                 table.jsonb("data").notNullable().defaultTo("{}");
                 table.specificType(
                     "fulltext",

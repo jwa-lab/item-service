@@ -2,7 +2,7 @@ import fs from "fs";
 import { OpenAPIV3 } from "openapi-types";
 import { SubscriptionOptions } from "nats";
 
-import { Logger } from "../../common/logger/Logger";
+import { Logger } from "../Logger/Logger";
 import { PrivateHandler } from "../NatsRunner/Handlers";
 
 type OpenAPIDocs = Pick<OpenAPIV3.Document, "paths" | "components" | "tags">;

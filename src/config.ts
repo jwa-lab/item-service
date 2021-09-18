@@ -5,8 +5,8 @@ const {
     NATS_URL,
     LOGGING_FORMAT,
     TEZOS_RPC_URI,
-    WAREHOUSE_TEZOS_SECRET_KEY,
-    WAREHOUSE_TEZOS_PUBLIC_KEY_HASH,
+    TEZOS_SECRET_KEY,
+    TEZOS_PUBLIC_KEY_HASH,
     WAREHOUSE_CONTRACT_ADDRESS,
     PGSQL_HOST,
     PGSQL_USER,
@@ -25,24 +25,21 @@ if (!TEZOS_RPC_URI) {
     );
 }
 
-if (!WAREHOUSE_TEZOS_SECRET_KEY) {
+if (!TEZOS_SECRET_KEY) {
     throw new Error(
         "Please provide an uncrypted private key to sign transactions with via WAREHOUSE_SECRET_KEY."
     );
 }
 
-if (!WAREHOUSE_TEZOS_PUBLIC_KEY_HASH) {
+if (!TEZOS_PUBLIC_KEY_HASH) {
     throw new Error(
         "Please provide a public key hash for the contract owner via WAREHOUSE_TEZOS_PUBLIC_KEY_HASH."
     );
 }
 
-if (
-    WAREHOUSE_CONTRACT_ADDRESS &&
-    !validateAddress(WAREHOUSE_CONTRACT_ADDRESS)
-) {
+if (!validateAddress(WAREHOUSE_CONTRACT_ADDRESS)) {
     throw new Error(
-        "Please provide a valid KT1 address to access the WAREHOUSE via WAREHOUSE_CONTRACT_ADDRESS or leave blank for the contract to be automatically deployed"
+        "Please provide a valid KT1 address to access the WAREHOUSE via WAREHOUSE_CONTRACT_ADDRESS."
     );
 }
 
@@ -51,8 +48,8 @@ export default {
     NATS_URL,
     LOGGING_FORMAT,
     TEZOS_RPC_URI,
-    WAREHOUSE_TEZOS_SECRET_KEY,
-    WAREHOUSE_TEZOS_PUBLIC_KEY_HASH,
+    TEZOS_SECRET_KEY,
+    TEZOS_PUBLIC_KEY_HASH,
     WAREHOUSE_CONTRACT_ADDRESS,
     PGSQL_HOST,
     PGSQL_USER,

@@ -5,7 +5,7 @@ export class Item {
     readonly name: string;
     readonly available_quantity: number;
     readonly total_quantity: number;
-    readonly is_frozen: boolean;
+    readonly frozen: boolean;
     readonly data: Record<string, string>;
 
     constructor({
@@ -13,14 +13,14 @@ export class Item {
         name,
         available_quantity,
         total_quantity,
-        is_frozen,
+        frozen,
         data
     }: Item) {
         this.item_id = item_id;
         this.name = name;
         this.available_quantity = available_quantity;
         this.total_quantity = total_quantity;
-        this.is_frozen = is_frozen;
+        this.frozen = frozen;
         this.data = data;
     }
 }
@@ -30,6 +30,6 @@ export const itemSchema = Joi.object({
     name: Joi.string().max(100).required(),
     available_quantity: Joi.number().min(0).required(),
     total_quantity: Joi.number().min(0).required(),
-    is_frozen: Joi.boolean().required(),
+    frozen: Joi.boolean().required(),
     data: Joi.object().pattern(/^/, Joi.string()).required()
 });

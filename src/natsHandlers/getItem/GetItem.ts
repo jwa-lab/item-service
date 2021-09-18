@@ -6,7 +6,7 @@ import {
 } from "../../common/NatsRunner/Handlers";
 import { AIRLOCK_VERBS } from "../../common/NatsRunner/NatsRunner";
 import { AirlockMessage, Message } from "../../common/NatsRunner/Messages";
-import { WinstonLogger } from "../../common/logger/WinstonLogger";
+import { Logger } from "../../common/Logger/Logger";
 import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 
@@ -22,7 +22,7 @@ export class GetItemAirlockHandler extends AirlockHandler {
 
     constructor(
         private SERVICE_NAME: string,
-        private logger: WinstonLogger,
+        private logger: Logger,
         private natsConnection: NatsConnection
     ) {
         super();
@@ -59,6 +59,6 @@ export class GetItemHandler extends PrivateHandler {
     }
 
     handle(msg: Message): Promise<Item> {
-        return this.itemRepository.getItem(msg.data as number);
+        return this.itemRepository.getItem(msg.data as Pick<Item, "item_id">);
     }
 }

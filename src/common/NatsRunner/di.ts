@@ -1,6 +1,6 @@
 module.exports = {
     imports: [
-        { resource: "../openApi/openApi.json" },
-        { resource: "../logger/logger.json" }
+        { resource: "../openApi/di" },
+        { resource: "../Logger/di" }
     ]
 };

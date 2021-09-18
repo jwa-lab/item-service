@@ -8,7 +8,9 @@ import { AIRLOCK_VERBS } from "../../common/NatsRunner/NatsRunner";
 import { AirlockMessage, Message } from "../../common/NatsRunner/Messages";
 import { Item, itemSchema } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
-import { Logger } from "../../common/logger/Logger";
+import { Logger } from "../../common/Logger/Logger";
+import { MessageBus } from "../../common/MessageBus/MessageBus";
+import { TokenizationEvents } from "../../services/tokenization/TokenizationService";
 
 export class CreateItemAirlockHandler extends AirlockHandler {
     readonly subject = "item";
@@ -56,7 +58,8 @@ export class CreateItemHandler extends PrivateHandler {
     constructor(
         private SERVICE_NAME: string,
         private logger: Logger,
-        private itemRepository: ItemRepository
+        private itemRepository: ItemRepository,
+        private messageBus: MessageBus
     ) {
         super();
     }
@@ -67,6 +70,8 @@ export class CreateItemHandler extends PrivateHandler {
         );
 
         this.logger.info(`item added with id ${item_id}`);
+
+        this.messageBus.publish(TokenizationEvents.ITEM_CREATED, item_id);
 
         return {
             item_id
