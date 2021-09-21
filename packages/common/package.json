@@ -1,0 +1,30 @@
+{
+  "name": "common",
+  "version": "0.0.1",
+  "description": "Common JS and TS tools for building microservices in the JWA Platform",
+  "main": "./dist/index.js",
+  "scripts": {
+    "prettier": "npx prettier --write .",
+    "lint": "eslint ./src/ --ext .ts --max-warnings 0",
+    "clean": "rm -rf ./dist/*",
+    "dev": "npx tsc -w",
+    "build": "npx tsc"
+  },
+  "devDependencies": {
+    "@tsconfig/node14": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "openapi-types": "^9.3.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "node-dependency-injection": "^2.7.1",
+    "winston": "^3.3.3"
+  },
+  "peerDependencies": {
+    "nats": "^2.1.0"
+  }
+}

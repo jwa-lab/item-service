@@ -1,0 +1,45 @@
+{
+    "name": "item-service",
+    "version": "0.0.1",
+    "description": "Store and Retrieve Items and Item instances",
+    "main": "dist/index.js",
+    "scripts": {
+        "prettier": "npx prettier --write .",
+        "lint": "eslint ./src/ --ext .ts --max-warnings 0",
+        "clean": "rm -rf ./dist/*",
+        "build": "npx tsc",
+        "start": "node ./dist/index.js",
+        "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
+        "test": "jest tests/",
+        "start-db": "docker compose up",
+        "deploy-warehouse": "node tezos/deploy.js",
+        "seed-db": "npx knex seed:run"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "^7.15.6",
+        "@babel/preset-typescript": "^7.15.0",
+        "@tsconfig/node14": "^1.0.1",
+        "@types/jest": "^27.0.1",
+        "@typescript-eslint/eslint-plugin": "^4.29.3",
+        "@typescript-eslint/parser": "^4.29.3",
+        "common": "*",
+        "concurrently": "^6.2.1",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "jest": "^27.0.6",
+        "jest-environment-node": "^27.0.6",
+        "nodemon": "^2.0.12",
+        "prettier": "^2.3.2",
+        "typescript": "^4.3.5"
+    },
+    "dependencies": {
+        "@jwalab/tokenization-service-contracts": "^0.1.1",
+        "@taquito/signer": "^10.1.2",
+        "@taquito/taquito": "^10.1.2",
+        "@taquito/utils": "^10.1.0",
+        "joi": "^17.4.2",
+        "knex": "^0.95.11",
+        "nats": "^2.1.0",
+        "pg": "^8.7.1"
+    }
+}
