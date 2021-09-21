@@ -1,6 +1,6 @@
 module.exports = {
     imports: [
-        { resource: "./services/MessageBus/di" },
+        { resource: "./services/EventBus/di" },
         { resource: "./services/Tezos/di" },
         { resource: "./services/knex/di" },
         { resource: "./repositories/di" },

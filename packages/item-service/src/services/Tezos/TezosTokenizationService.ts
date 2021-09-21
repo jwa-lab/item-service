@@ -7,7 +7,6 @@ import {
     WarehouseItem
 } from "@jwalab/tokenization-service-contracts";
 
-import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TokenizationService } from "../tokenization/TokenizationService";
 
@@ -28,7 +27,7 @@ export class TezosTokenizationService implements TokenizationService {
         this.jetStreamClient = natsConnection.jetstream();
     }
 
-    async createItem(itemId: Pick<Item, "item_id">): Promise<void> {
+    async createItem(itemId: number): Promise<void> {
         const item = await this.itemRepository.getItem(itemId);
 
         // need to remove this comment by typing WarehouseItem better

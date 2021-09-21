@@ -1,21 +1,18 @@
 import { AckPolicy, NatsConnection } from "nats";
 
-import { Logger, MessageBus, RunnerPlugin } from "common";
+import { Logger, EventBus, RunnerPlugin } from "common";
 
-import { Item } from "../../entities/item";
-import { TokenizationEvents } from "../tokenization/TokenizationService";
+import { ItemCreatedEvent } from "../../events/item";
 
 import { TezosTokenizationService } from "./TezosTokenizationService";
 
-export class TezosPlugin extends RunnerPlugin {
+export class TezosPlugin implements RunnerPlugin {
     constructor(
         private logger: Logger,
-        private messageBus: MessageBus,
+        private eventBus: EventBus,
         private tezosTokenizationService: TezosTokenizationService,
         private natsConnections: NatsConnection
-    ) {
-        super();
-    }
+    ) {}
 
     async start(): Promise<void> {
         await this.initJetStream();
@@ -43,10 +40,12 @@ export class TezosPlugin extends RunnerPlugin {
     }
 
     subscribeToEvents(): void {
-        this.messageBus.subscribe(
-            TokenizationEvents.ITEM_CREATED,
-            (itemId: unknown) =>
-                this.tezosTokenizationService.createItem(itemId as Pick<Item, "item_id">)
+        this.eventBus.subscribe(
+            "ItemCreatedEvent",
+            (itemCreatedEvent: ItemCreatedEvent) =>
+                this.tezosTokenizationService.createItem(
+                    itemCreatedEvent.item_id
+                )
         );
     }
 }

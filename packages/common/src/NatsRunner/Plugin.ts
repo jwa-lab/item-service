@@ -1,4 +1,4 @@
-export abstract class RunnerPlugin {
-  abstract start(): Promise<void>;
+export interface RunnerPlugin {
+  start(): Promise<void>;
   onDestroy?(): Promise<void>;
 }

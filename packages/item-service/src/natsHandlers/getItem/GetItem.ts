@@ -61,6 +61,6 @@ export class GetItemHandler extends PrivateHandler {
     }
 
     handle(msg: Message): Promise<Item> {
-        return this.itemRepository.getItem(msg.data as Pick<Item, "item_id">);
+        return this.itemRepository.getItem(msg.data as number);
     }
 }

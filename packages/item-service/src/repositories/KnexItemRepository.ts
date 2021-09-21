@@ -17,7 +17,7 @@ export class KnexItemRepository implements ItemRepository {
         return result[0].item_id;
     }
 
-    async getItem(item_id: Pick<Item, "item_id">): Promise<Item> {
+    async getItem(item_id: number): Promise<Item> {
         const result = await this.knex(this.itemTable)
             .select()
             .where("item_id", item_id);

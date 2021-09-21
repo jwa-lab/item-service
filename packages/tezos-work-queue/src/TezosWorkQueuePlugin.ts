@@ -43,7 +43,9 @@ export class TezosWorkQueuePlugin implements RunnerPlugin {
             try {
                 message.working();
 
-                const operation = this.jsonCodec.decode(message.data) as WalletParamsWithKind;
+                const operation = this.jsonCodec.decode(
+                    message.data
+                ) as WalletParamsWithKind;
 
                 this.logger.debug(`Processing ${JSON.stringify(operation)}`);
 
@@ -54,9 +56,7 @@ export class TezosWorkQueuePlugin implements RunnerPlugin {
                 await batchOperation.confirmation(1);
 
                 this.logger.debug(
-                    `Successfully processed ${JSON.stringify(
-                        operation
-                    )}`
+                    `Successfully processed ${JSON.stringify(operation)}`
                 );
                 message.ack();
             } catch (err) {

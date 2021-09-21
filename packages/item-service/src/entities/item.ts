@@ -15,7 +15,7 @@ export class Item {
         total_quantity,
         frozen,
         data
-    }: { [K in keyof Item]: Item[K]}) {
+    }: { [K in keyof Item]: Item[K] }) {
         this.item_id = item_id;
         this.name = name;
         this.available_quantity = available_quantity;

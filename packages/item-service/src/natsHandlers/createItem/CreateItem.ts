@@ -6,12 +6,12 @@ import {
     AirlockMessage,
     Message,
     Logger,
-    MessageBus
+    EventBus
 } from "common";
 
 import { Item, itemSchema } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
-import { TokenizationEvents } from "../../services/tokenization/TokenizationService";
+import { ItemCreatedEvent } from "../../events/item";
 
 export class CreateItemAirlockHandler extends AirlockHandler {
     readonly subject = "item";
@@ -60,7 +60,7 @@ export class CreateItemHandler extends PrivateHandler {
         private SERVICE_NAME: string,
         private logger: Logger,
         private itemRepository: ItemRepository,
-        private messageBus: MessageBus
+        private eventBus: EventBus
     ) {
         super();
     }
@@ -72,7 +72,7 @@ export class CreateItemHandler extends PrivateHandler {
 
         this.logger.info(`item added with id ${item_id}`);
 
-        this.messageBus.publish(TokenizationEvents.ITEM_CREATED, item_id);
+        this.eventBus.publish(new ItemCreatedEvent(item_id));
 
         return {
             item_id

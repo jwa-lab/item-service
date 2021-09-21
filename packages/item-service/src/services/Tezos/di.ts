@@ -36,7 +36,7 @@ module.exports = {
             tags: [{ name: "runner.plugin" }],
             arguments: [
                 "@logger",
-                "@messageBus",
+                "@eventBus",
                 "@tezosTokenizationService",
                 "@natsConnection"
             ]
