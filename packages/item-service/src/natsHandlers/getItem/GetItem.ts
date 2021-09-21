@@ -1,16 +1,23 @@
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
 
 import {
-    AirlockHandler,
-    PrivateHandler,
     AIRLOCK_VERBS,
+    AirlockHandler,
     AirlockMessage,
+    Logger,
     Message,
-    Logger
+    PrivateHandler,
+    isStudio
 } from "common";
 
 import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
+
+interface GetItemPayloadInterface {
+    item_id: number;
+    is_studio: boolean;
+    studio_id: string;
+}
 
 export class GetItemAirlockHandler extends AirlockHandler {
     readonly subject = "item.*";
@@ -31,13 +38,21 @@ export class GetItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<Item> {
+        if (!isStudio(msg.headers)) {
+            throw new Error("Invalid token type, a studio token is required.");
+        }
+
         const item_id = Number(msg.subject.split(".")[2]);
 
         this.logger.info(`Getting item ${item_id}`);
 
         const response = await this.natsConnection.request(
             "item-service.get-item",
-            JSONCodec().encode(item_id)
+            JSONCodec().encode({
+                item_id,
+                is_studio: msg.headers.is_studio,
+                studio_id: msg.headers.studio_id
+            })
         );
 
         return JSONCodec<Item>().decode(response.data);
@@ -60,7 +75,18 @@ export class GetItemHandler extends PrivateHandler {
         super();
     }
 
-    handle(msg: Message): Promise<Item> {
-        return this.itemRepository.getItem(msg.data as number);
+    async handle(msg: Message): Promise<Item> {
+        const data = msg.data as GetItemPayloadInterface;
+        const fetchedItem = await this.itemRepository.getItem(data.item_id);
+
+        if (!data?.is_studio) {
+            throw new Error("INVALID_JWT_STUDIO");
+        } else {
+            if (fetchedItem.studio_id !== data.studio_id) {
+                throw new Error("INVALID_STUDIO_ID");
+            }
+        }
+
+        return fetchedItem;
     }
 }
