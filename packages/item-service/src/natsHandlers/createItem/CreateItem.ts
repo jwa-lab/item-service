@@ -1,12 +1,13 @@
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
 import {
-    AirlockHandler,
-    PrivateHandler,
     AIRLOCK_VERBS,
+    AirlockHandler,
     AirlockMessage,
-    Message,
+    EventBus,
+    isStudio,
     Logger,
-    EventBus
+    Message,
+    PrivateHandler
 } from "common";
 
 import { Item, itemSchema } from "../../entities/item";
@@ -32,9 +33,18 @@ export class CreateItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<{ item_id: number }> {
-        const item = new Item(msg.body as Item);
+        await itemSchema.validateAsync(msg.body);
 
-        await itemSchema.validateAsync(item);
+        if (!isStudio(msg.headers)) {
+            throw new Error("Invalid token type, a studio token is required.");
+        }
+
+        const itemProps = {
+            ...(msg.body as Partial<Item>),
+            studio_id: msg.headers.studio_id
+        };
+
+        const item = new Item(itemProps as Item);
 
         this.logger.info(`adding item ${JSON.stringify(item)}`);
 
