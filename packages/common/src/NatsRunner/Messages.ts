@@ -49,8 +49,8 @@ function natsHeadersToObject(headers: MsgHdrs): Record<string, unknown> {
     obj[key] = headers.get(key);
   }
 
-  if (obj['authorization']) {
-    Object.assign(obj, parseJwtToNats(obj['authorization']));
+  if (obj["authorization"]) {
+    Object.assign(obj, parseJwtToNats(obj["authorization"]));
   }
 
   return obj;
