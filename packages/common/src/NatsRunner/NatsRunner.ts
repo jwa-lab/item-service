@@ -1,4 +1,12 @@
-import { connect, NatsConnection, Subscription, JSONCodec, Codec, JetStreamClient, JetStreamSubscription } from "nats";
+import {
+  connect,
+  NatsConnection,
+  Subscription,
+  JSONCodec,
+  Codec,
+  JetStreamClient,
+  JetStreamSubscription,
+} from "nats";
 import {
   ContainerBuilder,
   JsFileLoader,
@@ -14,7 +22,6 @@ export * from "./Messages";
 export * from "./Handlers";
 export * from "./Consumers";
 export * from "./Plugin";
-export * from "../utils";
 
 export enum AIRLOCK_VERBS {
   "GET" = "GET",
@@ -106,7 +113,9 @@ export class NatsRunner {
     this.container.register("jetStreamClient");
     this.container.set("jetStreamClient", this.jetStreamClient);
 
-    this.logger.debug(`NatsRunner connected to NATS ${this.config.NATS_URL} and JetStream client initialized`);
+    this.logger.debug(
+      `NatsRunner connected to NATS ${this.config.NATS_URL} and JetStream client initialized`
+    );
   }
 
   private async startPlugins() {
@@ -154,9 +163,7 @@ export class NatsRunner {
       if (consumer instanceof JetStreamConsumer) {
         this.registerJetStreamConsumer(consumer);
       } else {
-        throw new Error(
-          "Nats Consumer must extend type JetStreamConsumer"
-        );
+        throw new Error("Nats Consumer must extend type JetStreamConsumer");
       }
     });
   }

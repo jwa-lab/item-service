@@ -22,6 +22,24 @@ export class KnexItemRepository implements ItemRepository {
         return result[0].item_id;
     }
 
+    async updateItem(item: Item): Promise<Item> {
+        const existingItem = await this.getItem(item.item_id as number);
+
+        if (existingItem.studio_id !== item.studio_id) {
+            throw new Error("Invalid studio, you cannot update this item.");
+        }
+
+        if (existingItem.frozen) {
+            throw new Error("Cannot update this item. Item is frozen.");
+        }
+
+        const result = await this.knex<Item>(this.itemTable)
+            .update(item, Object.keys(item))
+            .where("item_id", item.item_id);
+
+        return result[0];
+    }
+
     async getItem(item_id: number): Promise<Item> {
         const result = await this.knex(this.itemTable)
             .select()

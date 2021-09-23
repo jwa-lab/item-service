@@ -1,35 +1,40 @@
 {
-    "name": "item-service",
-    "version": "0.0.1",
-    "description": "Store and Retrieve Items and Item instances",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/jwa-lab/item-service.git"
-    },
-    "engines": {
-        "node": ">=14",
-        "npm": ">=7.21"
-    },
-    "keywords": [
-        "JWA",
-        "LAB",
-        "Tokenization",
-        "Service",
-        "item",
-        "NFT",
-        "Tezos"
-    ],
-    "author": "JWA Lab",
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/jwa-lab/item-service/issues"
-    },
-    "homepage": "https://github.com/jwa-lab/item-service#readme",
-    "devDependencies": {
-        "@jwalab/minilab": "^0.0.15"
-    },
-    "workspaces": [
-        "./packages/*"
-    ]
+  "name": "item-service",
+  "version": "0.0.1",
+  "description": "Store and Retrieve Items and Item instances",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwa-lab/item-service.git"
+  },
+  "engines": {
+    "node": ">=14",
+    "npm": ">=7.21"
+  },
+  "keywords": [
+    "JWA",
+    "LAB",
+    "Tokenization",
+    "Service",
+    "item",
+    "NFT",
+    "Tezos"
+  ],
+  "author": "JWA Lab",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/jwa-lab/item-service/issues"
+  },
+  "homepage": "https://github.com/jwa-lab/item-service#readme",
+  "devDependencies": {
+    "@jwalab/minilab": "^0.0.15",
+    "husky": "^7.0.2",
+    "pretty-quick": "^3.1.1"
+  },
+  "workspaces": [
+    "./packages/*"
+  ],
+  "scripts": {
+    "prepare": "husky install"
+  }
 }
