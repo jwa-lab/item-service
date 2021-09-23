@@ -58,4 +58,36 @@ export class TezosTokenizationService implements TokenizationService {
             })
         );
     }
+
+    async updateItem(itemId: number): Promise<void> {
+        const item = await this.itemRepository.getItem(itemId);
+
+        // need to remove this comment by typing WarehouseItem better
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+        const warehouseItem = new WarehouseItem(item as any);
+
+        // node dependency injection doesn't support async factories
+        // so they return a Promise with the value, hence the await here.
+        // we should add a compilerPass with an async tag to work around this and maybe raise an issue with the library.
+        const operation = (await this.tezosWarehouseContract).methods
+            .update_item(...warehouseItem.toMichelsonArguments())
+            .toTransferParams();
+
+        const tezosOperation = {
+            kind: OpKind.TRANSACTION,
+            ...operation
+        };
+
+        this.logger.debug(
+            `jestream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
+        );
+
+        await this.jetStreamClient.publish(
+            TezosCommands.Execute,
+            this.jsonCodec.encode({
+                kind: OpKind.TRANSACTION,
+                ...operation
+            })
+        );
+    }
 }
