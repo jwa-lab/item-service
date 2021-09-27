@@ -1,4 +1,4 @@
-import {JSONCodec, NatsConnection, SubscriptionOptions} from "nats";
+import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
 import {
     AIRLOCK_VERBS,
     AirlockHandler,
@@ -10,10 +10,10 @@ import {
     PrivateHandler
 } from "common";
 
-import {Item} from "../../entities/item";
-import {ItemRepository} from "../../repositories/ItemRepository";
+import { Item } from "../../entities/item";
+import { ItemRepository } from "../../repositories/ItemRepository";
 import Joi from "joi";
-import {ItemUpdatedEvent} from "../../events/item";
+import { ItemUpdatedEvent } from "../../events/item";
 
 export class UpdateItemAirlockHandler extends AirlockHandler {
     readonly subject = "item";

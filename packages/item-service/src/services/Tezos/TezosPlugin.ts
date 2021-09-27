@@ -2,7 +2,7 @@ import { AckPolicy, NatsConnection } from "nats";
 
 import { Logger, EventBus, RunnerPlugin } from "common";
 
-import {ItemCreatedEvent, ItemUpdatedEvent} from "../../events/item";
+import { ItemCreatedEvent, ItemUpdatedEvent } from "../../events/item";
 
 import { TezosTokenizationService } from "./TezosTokenizationService";
 
