@@ -47,7 +47,7 @@ export class TezosTokenizationService implements TokenizationService {
         };
 
         this.logger.debug(
-            `jestream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
+            `jetstream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
         );
 
         await this.jetStreamClient.publish(

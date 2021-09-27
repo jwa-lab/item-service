@@ -1,16 +1,18 @@
-import { connect, NatsConnection, Subscription, JSONCodec, Codec } from "nats";
+import { connect, NatsConnection, Subscription, JSONCodec, Codec, JetStreamClient, JetStreamSubscription } from "nats";
 import {
   ContainerBuilder,
   JsFileLoader,
   Parameter,
 } from "node-dependency-injection";
 import { Logger } from "../Logger/Logger";
+import { JetStreamConsumer } from "./Consumers";
 
 import { AirlockHandler, PrivateHandler } from "./Handlers";
-import { AirlockMessage, Message } from "./Messages";
+import { AirlockMessage, JetStreamMessage, Message } from "./Messages";
 
 export * from "./Messages";
 export * from "./Handlers";
+export * from "./Consumers";
 export * from "./Plugin";
 export * from "../utils";
 
@@ -33,6 +35,7 @@ export class NatsRunner {
   private readonly jsonCodec: Codec<unknown>;
 
   private natsConnection!: NatsConnection;
+  private jetStreamClient!: JetStreamClient;
   protected logger!: Logger;
   private config!: Record<string, unknown>;
 
@@ -49,6 +52,7 @@ export class NatsRunner {
       await this.initNats();
       await this.startPlugins();
       await this.registerNatsHandlers();
+      await this.registerJetStreamConsumers();
 
       this.registerSignalHandlers();
     } catch (e) {
@@ -97,7 +101,12 @@ export class NatsRunner {
     this.container.register("natsConnection");
     this.container.set("natsConnection", this.natsConnection);
 
-    this.logger.debug(`NatsRunner connected to NATS ${this.config.NATS_URL}`);
+    this.jetStreamClient = this.natsConnection.jetstream();
+
+    this.container.register("jetStreamClient");
+    this.container.set("jetStreamClient", this.jetStreamClient);
+
+    this.logger.debug(`NatsRunner connected to NATS ${this.config.NATS_URL} and JetStream client initialized`);
   }
 
   private async startPlugins() {
@@ -129,6 +138,24 @@ export class NatsRunner {
       } else {
         throw new Error(
           "Nats Handler must extend type Handler or AirlockHandler"
+        );
+      }
+    });
+  }
+
+  private async registerJetStreamConsumers() {
+    const ids = Array.from(
+      this.container.findTaggedServiceIds("nats.consumer").keys()
+    );
+
+    ids.forEach((id) => {
+      const consumer = this.container.get(id);
+
+      if (consumer instanceof JetStreamConsumer) {
+        this.registerJetStreamConsumer(consumer);
+      } else {
+        throw new Error(
+          "Nats Consumer must extend type JetStreamConsumer"
         );
       }
     });
@@ -203,6 +230,39 @@ export class NatsRunner {
             error: (err as Error).message,
           })
         );
+      }
+    }
+  }
+
+  private async registerJetStreamConsumer(consumer: JetStreamConsumer) {
+    const subject = consumer.subject;
+
+    this.logger.debug(`Registering consumer for ${subject}`);
+
+    const consumerOptions = consumer.getConsumerOptions();
+
+    const subscription = await this.jetStreamClient.subscribe(
+      subject,
+      consumerOptions
+    );
+
+    this.handleJetStreamMessage(subscription, consumer);
+  }
+
+  async handleJetStreamMessage(
+    subscription: JetStreamSubscription,
+    consumer: JetStreamConsumer
+  ): Promise<void> {
+    for await (const message of subscription) {
+      try {
+        await consumer.handle(new JetStreamMessage(message));
+      } catch (err) {
+        this.logger.error((err as Error).message);
+
+        // if the handler wants the message to be redelivered,
+        // it needs to catch the error itself and implement the necessary retries.
+        // by default, a non caught error will prevent the message from being redelivered
+        message.term();
       }
     }
   }

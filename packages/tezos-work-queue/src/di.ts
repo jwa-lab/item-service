@@ -11,10 +11,10 @@ module.exports = {
                 "%config.TEZOS_SECRET_KEY%"
             ]
         },
-        TezosWorkQueuePlugin: {
-            class: "./TezosWorkQueuePlugin",
-            tags: [{ name: "runner.plugin" }],
-            arguments: ["@logger", "@natsConnection", "@tezosClient"]
+        TezosWorkQueue: {
+            class: "./TezosWorkQueue",
+            tags: [{ name: "nats.consumer" }],
+            arguments: ["@logger", "@tezosClient"]
         }
     }
 };
