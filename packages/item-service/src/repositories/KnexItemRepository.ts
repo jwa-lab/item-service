@@ -21,6 +21,10 @@ export class KnexItemRepository implements ItemRepository {
     async updateItem(item: Item): Promise<number> {
         const existingItem = await this.getItem(item.item_id as number);
 
+        if (existingItem.studio_id !== item.studio_id) {
+            throw new Error("Invalid studio, you cannot update this item.");
+        }
+
         if (existingItem.frozen) {
             throw new Error("Cannot update this item. Item is frozen.");
         }
