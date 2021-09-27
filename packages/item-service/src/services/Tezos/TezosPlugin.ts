@@ -41,7 +41,7 @@ export class TezosPlugin implements RunnerPlugin {
 
     subscribeToEvents(): void {
         this.eventBus.subscribe(
-            "ItemCreatedEvent",
+            ItemCreatedEvent.name,
             (itemCreatedEvent: ItemCreatedEvent) =>
                 this.tezosTokenizationService.createItem(
                     itemCreatedEvent.item_id
@@ -49,7 +49,7 @@ export class TezosPlugin implements RunnerPlugin {
         );
 
         this.eventBus.subscribe(
-            "ItemUpdatedEvent",
+            ItemUpdatedEvent.name,
             (itemUpdatedEvent: ItemUpdatedEvent) =>
                 this.tezosTokenizationService.updateItem(
                     itemUpdatedEvent.item_id

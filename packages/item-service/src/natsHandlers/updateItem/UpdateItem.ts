@@ -76,18 +76,16 @@ export class UpdateItemHandler extends PrivateHandler {
         super();
     }
 
-    async handle(msg: Message): Promise<{ item_id: number }> {
-        const item_id = await this.itemRepository.updateItem(
+    async handle(msg: Message): Promise<Item> {
+        const item = await this.itemRepository.updateItem(
             new Item(msg.data as Item)
         );
 
-        this.logger.info(`item updated with id ${item_id}`);
+        this.logger.info(`item updated with id ${item.item_id}`);
 
-        this.eventBus.publish(new ItemUpdatedEvent(item_id));
+        this.eventBus.publish(new ItemUpdatedEvent(item.item_id as number));
 
-        return {
-            item_id
-        };
+        return item;
     }
 }
 
