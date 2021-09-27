@@ -1,4 +1,4 @@
-import { JSONCodec, Msg, MsgHdrs } from "nats";
+import { JsMsg, JSONCodec, Msg, MsgHdrs } from "nats";
 import { parseJwtToNats } from "../utils/tokenParser";
 
 export class AirlockMessage {
@@ -42,6 +42,18 @@ export class Message {
   }
 }
 
+export class JetStreamMessage<T> {
+  data: T | null;
+  msg: JsMsg;
+
+  constructor(msg: JsMsg) {
+    this.msg = msg;
+    this.data = String(msg.data)
+      ? JSONCodec<T>().decode(msg.data)
+      : null;
+  }
+}
+
 function natsHeadersToObject(headers: MsgHdrs): Record<string, unknown> {
   const obj = Object.create(null);
 
@@ -49,8 +61,8 @@ function natsHeadersToObject(headers: MsgHdrs): Record<string, unknown> {
     obj[key] = headers.get(key);
   }
 
-  if (obj["authorization"]) {
-    Object.assign(obj, parseJwtToNats(obj["authorization"]));
+  if (obj.authorization) {
+    Object.assign(obj, parseJwtToNats(obj.authorization));
   }
 
   return obj;
