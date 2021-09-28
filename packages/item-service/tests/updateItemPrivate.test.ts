@@ -33,6 +33,8 @@ describe("Given UpdateItem Handler", () => {
         beforeEach(async () => {
             response = await updateItemHandler.handle({
                 data: {
+                    is_studio: true,
+                    studio_id: "studio_id",
                     item_id: 1,
                     name: "updated name",
                     total_quantity: 10,
