@@ -15,6 +15,11 @@ import { ItemRepository } from "../../repositories/ItemRepository";
 import Joi from "joi";
 import { ItemUpdatedEvent } from "../../events/item";
 
+interface UpdateItemPrivatePayloadInterface extends Item {
+    is_studio: boolean;
+    studio_id: string;
+}
+
 export class UpdateItemAirlockHandler extends AirlockHandler {
     readonly subject = "item";
     readonly verb = AIRLOCK_VERBS.PUT;
@@ -42,7 +47,8 @@ export class UpdateItemAirlockHandler extends AirlockHandler {
 
         const itemProps = {
             ...(msg.body as Partial<Item>),
-            studio_id: msg.headers.studio_id
+            studio_id: msg.headers.studio_id,
+            is_studio: msg.headers.is_studio,
         };
 
         const item = new Item(itemProps as Item);
@@ -51,7 +57,7 @@ export class UpdateItemAirlockHandler extends AirlockHandler {
 
         const response = await this.natsConnection.request(
             `${this.SERVICE_NAME}.update-item`,
-            JSONCodec().encode(item)
+            JSONCodec().encode(itemProps)
         );
 
         return JSONCodec<{ item_id: number }>().decode(response.data);
@@ -77,6 +83,16 @@ export class UpdateItemHandler extends PrivateHandler {
     }
 
     async handle(msg: Message): Promise<Item> {
+        const data = msg.data as UpdateItemPrivatePayloadInterface;
+
+        if (!data.is_studio) {
+            throw new Error("INVALID_JWT_STUDIO");
+        }
+
+        if (!data.studio_id) {
+            throw new Error("STUDIO_ID_MISSING");
+        }
+        
         const item = await this.itemRepository.updateItem(
             new Item(msg.data as Item)
         );
