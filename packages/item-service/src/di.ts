@@ -5,7 +5,8 @@ module.exports = {
         { resource: "./services/knex/di" },
         { resource: "./repositories/di" },
         { resource: "./natsHandlers/createItem/di" },
-        { resource: "./natsHandlers/updateItem/di" },
-        { resource: "./natsHandlers/getItem/di" }
+        { resource: "./natsHandlers/getItem/di" },
+        { resource: "./natsHandlers/getItems/di" },
+        { resource: "./natsHandlers/updateItem/di" }
     ]
 };
