@@ -28,12 +28,25 @@
     "homepage": "https://github.com/jwa-lab/item-service#readme",
     "devDependencies": {
         "@jwalab/minilab": "^0.0.15",
-        "husky": "^7.0.2"
+        "husky": "^7.0.2",
+        "lint-staged": "^11.1.2"
     },
     "workspaces": [
         "./packages/*"
     ],
     "scripts": {
         "prepare": "husky install"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "**/*.ts": [
+            "npm run lint -ws",
+            "npm run prettier -ws",
+            "git add"
+        ]
     }
 }
