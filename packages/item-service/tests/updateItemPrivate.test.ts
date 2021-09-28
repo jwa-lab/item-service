@@ -1,7 +1,7 @@
-import { UpdateItemHandler } from "../src/natsHandlers/updateItem/UpdateItem";
+import {UpdateItemHandler} from "../src/natsHandlers/updateItem/UpdateItem";
 import logger from "./utils/mockLogger";
 import eventBus from "./utils/mockEventBus";
-import {ItemCreatedEvent, ItemUpdatedEvent} from "../src/events/item";
+import {ItemUpdatedEvent} from "../src/events/item";
 
 describe("Given UpdateItem Handler", () => {
     let updateItemHandler;
@@ -11,6 +11,7 @@ describe("Given UpdateItem Handler", () => {
         itemRepository = {
             updateItem: jest.fn().mockReturnValue({
                 item_id: 1,
+                studio_id: "studio_id",
                 name: "updated name",
                 total_quantity: 10,
                 available_quantity: 10,
@@ -48,6 +49,7 @@ describe("Given UpdateItem Handler", () => {
         it("Then updates the item to the repository", () => {
             expect(itemRepository.updateItem.mock.calls[0][0]).toEqual({
                 item_id: 1,
+                studio_id: "studio_id",
                 name: "updated name",
                 total_quantity: 10,
                 available_quantity: 10,
@@ -59,6 +61,7 @@ describe("Given UpdateItem Handler", () => {
         it("Then returns the newly updated item", () => {
             expect(response).toEqual({
                 item_id: 1,
+                studio_id: "studio_id",
                 name: "updated name",
                 total_quantity: 10,
                 available_quantity: 10,

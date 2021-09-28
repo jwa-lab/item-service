@@ -1,4 +1,5 @@
-import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
+import Joi from "joi";
+import {JSONCodec, NatsConnection, SubscriptionOptions} from "nats";
 import {
     AIRLOCK_VERBS,
     AirlockHandler,
@@ -9,11 +10,9 @@ import {
     Message,
     PrivateHandler
 } from "common";
-
-import { Item } from "../../entities/item";
-import { ItemRepository } from "../../repositories/ItemRepository";
-import Joi from "joi";
-import { ItemUpdatedEvent } from "../../events/item";
+import {Item} from "../../entities/item";
+import {ItemRepository} from "../../repositories/ItemRepository";
+import {ItemUpdatedEvent} from "../../events/item";
 
 interface UpdateItemPrivatePayloadInterface extends Item {
     is_studio: boolean;
@@ -92,7 +91,7 @@ export class UpdateItemHandler extends PrivateHandler {
         if (!data.studio_id) {
             throw new Error("STUDIO_ID_MISSING");
         }
-        
+
         const item = await this.itemRepository.updateItem(
             new Item(msg.data as Item)
         );
