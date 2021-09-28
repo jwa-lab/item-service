@@ -106,6 +106,52 @@
                     }
                 }
             }
+        },
+        "/item-service/items": {
+            "get": {
+                "tags": ["item-service"],
+                "summary": "Get an array of items.",
+                "operationId": "getItems",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "description": "Beginning of the results.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "example": 0
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Max number of results.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Items"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -139,6 +185,35 @@
                         "type": "integer",
                         "minimum": 0,
                         "example": 10
+                    }
+                }
+            },
+            "Items": {
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "array",
+                        "example": [
+                            {
+                                "item_id": 1,
+                                "studio_id": "studio_id",
+                                "name": "sunt officia",
+                                "total_quantity": 10,
+                                "available_quantity": 10,
+                                "frozen": false,
+                                "data": {},
+                                "fulltext": " sunt officia"
+                            }
+                        ]
+                    },
+                    "pagination": {
+                        "type": "object",
+                        "example": {
+                            "from": 0,
+                            "perPage": 10,
+                            "to": 10,
+                            "total": 1
+                        }
                     }
                 }
             }

@@ -4,6 +4,11 @@ import { Item } from "../entities/item";
 
 import { ItemRepository } from "./ItemRepository";
 
+export interface GetItemsInterface {
+    results: Item[];
+    pagination: Record<string, unknown>;
+}
+
 export class KnexItemRepository implements ItemRepository {
     private readonly itemTable = "items";
 
@@ -23,5 +28,30 @@ export class KnexItemRepository implements ItemRepository {
             .where("item_id", item_id);
 
         return new Item(result[0]);
+    }
+
+    async getItems(
+        start: number,
+        limit: number,
+        studio_id: string
+    ): Promise<GetItemsInterface> {
+        const totalQuery = await this.knex(this.itemTable).count("*").first();
+
+        const results = await this.knex<Item>(this.itemTable)
+            .select()
+            .where("studio_id", studio_id)
+            .offset(start)
+            .limit(limit);
+
+        const pagination = {
+            from: start,
+            count: results.length,
+            total: Number(totalQuery?.count)
+        };
+
+        return {
+            results,
+            pagination
+        };
     }
 }

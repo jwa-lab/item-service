@@ -4,23 +4,33 @@ import {
     AIRLOCK_VERBS,
     AirlockHandler,
     AirlockMessage,
+    isStudio,
     Logger,
     Message,
-    PrivateHandler,
-    isStudio
+    PrivateHandler
 } from "common";
 
 import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
+import { GetItemsInterface } from "../../repositories/KnexItemRepository";
+import Joi from "joi";
 
-interface GetItemPrivatePayloadInterface {
-    item_id: number;
+interface GetItemsPrivatePayloadInterface {
+    page: number;
+    start: number;
+    limit: number;
     is_studio: boolean;
     studio_id: string;
 }
 
-export class GetItemAirlockHandler extends AirlockHandler {
-    readonly subject = "item.*";
+interface GetItemsQueryInterface {
+    page: string;
+    start: string;
+    limit: string;
+}
+
+export class GetItemsAirlockHandler extends AirlockHandler {
+    readonly subject = "items";
     readonly verb = AIRLOCK_VERBS.GET;
 
     getSubscriptionOptions(): SubscriptionOptions {
@@ -38,18 +48,25 @@ export class GetItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<Item> {
+        const query = msg.query as unknown as GetItemsQueryInterface;
+        const parsedQuery = {
+            start: Number(query?.start) || 0,
+            limit:
+                typeof query?.limit !== "undefined" ? Number(query.limit) : 10
+        };
+
+        await getItemsSchema.validateAsync(parsedQuery);
+
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");
         }
 
-        const item_id = Number(msg.subject.split(".")[2]);
-
-        this.logger.info(`Getting item ${item_id}`);
+        this.logger.info(`Getting items ${msg.headers.studio_id}`);
 
         const response = await this.natsConnection.request(
-            "item-service.get-item",
+            "item-service.get-items",
             JSONCodec().encode({
-                item_id,
+                ...parsedQuery,
                 is_studio: msg.headers.is_studio,
                 studio_id: msg.headers.studio_id
             })
@@ -59,8 +76,8 @@ export class GetItemAirlockHandler extends AirlockHandler {
     }
 }
 
-export class GetItemHandler extends PrivateHandler {
-    readonly subject = "get-item";
+export class GetItemsHandler extends PrivateHandler {
+    readonly subject = "get-items";
 
     getSubscriptionOptions(): SubscriptionOptions {
         return {
@@ -75,18 +92,26 @@ export class GetItemHandler extends PrivateHandler {
         super();
     }
 
-    async handle(msg: Message): Promise<Item> {
-        const data = msg.data as GetItemPrivatePayloadInterface;
-        const fetchedItem = await this.itemRepository.getItem(data.item_id);
+    async handle(msg: Message): Promise<GetItemsInterface> {
+        const data = msg.data as GetItemsPrivatePayloadInterface;
 
-        if (!data?.is_studio) {
+        if (!data.is_studio) {
             throw new Error("INVALID_JWT_STUDIO");
-        } else {
-            if (fetchedItem.studio_id !== data.studio_id) {
-                throw new Error("INVALID_STUDIO_ID");
-            }
         }
 
-        return fetchedItem;
+        if (!data.studio_id) {
+            throw new Error("STUDIO_ID_MISSING");
+        }
+
+        return this.itemRepository.getItems(
+            data.start,
+            data.limit,
+            data.studio_id
+        );
     }
 }
+
+const getItemsSchema = Joi.object({
+    start: Joi.number().min(0).required(),
+    limit: Joi.number().min(1).required()
+});
