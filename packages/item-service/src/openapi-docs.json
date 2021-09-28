@@ -70,6 +70,37 @@
                         "description": "Server error"
                     }
                 }
+            },
+            "put": {
+                "tags": ["item-service"],
+                "summary": "Update an item",
+                "operationId": "updateItem",
+                "requestBody": {
+                    "description": "Update an existing not frozen item.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Item"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Item"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
             }
         },
         "/item-service/item/{item_id}": {
