@@ -1,0 +1,43 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+function docker-build() {
+    pushd ./packages/item-service
+    docker build . -t jwalab/$name
+    popd
+    pushd ./packages/tezos-work-queue
+    docker build . -t jwalab/$name
+    popd
+}
+
+function docker-tag() {
+    for tag in ${tags[@]}
+    do
+        docker tag jwalab/$name jwalab/$name:$tag
+    done
+}
+
+function docker-push() {
+    docker push jwalab/$name
+    for tag in ${tags[@]}
+    do
+        docker push jwalab/$name:$tag
+    done
+}
+
+function docker-build-tag-push() {
+    pushd ./packages/item-service
+    ./run docker-build
+    ./run docker-tag
+    ./run docker-push
+    popd
+
+    pushd ./packages/tezos-work-queue
+    ./run docker-build
+    ./run docker-tag
+    ./run docker-push
+    popd
+}
+
+"$@"
