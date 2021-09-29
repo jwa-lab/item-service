@@ -4,5 +4,6 @@ export * from "./Logger/Logger";
 export * from "./EventBus/EventEmitterEventBus";
 export * from "./EventBus/EventBus";
 export * from "./NatsRunner/NatsRunner";
+export * from "./utils";
 
 export default NatsRunner;
