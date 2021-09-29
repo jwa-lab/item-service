@@ -18,5 +18,14 @@ module.exports = {
                     "TEXT GENERATED ALWAYS AS (flatten_item_data(data, name)) STORED"
                 );
             });
+        await knex.schema
+            .dropTableIfExists("items_instances")
+            .createTable("items_instances", function (table) {
+                table.integer("instance_number").notNullable();
+                table.integer("item_id").notNullable();
+                table.string("user_id").notNullable();
+                table.jsonb("data").notNullable();
+                table.primary(["instance_number", "item_id"]);
+            });
     }
 };

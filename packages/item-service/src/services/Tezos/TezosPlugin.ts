@@ -1,8 +1,12 @@
 import { AckPolicy, NatsConnection } from "nats";
 
-import { Logger, EventBus, RunnerPlugin } from "common";
+import { EventBus, Logger, RunnerPlugin } from "common";
 
-import { ItemCreatedEvent, ItemUpdatedEvent } from "../../events/item";
+import {
+    ItemAssignedEvent,
+    ItemCreatedEvent,
+    ItemUpdatedEvent
+} from "../../events/item";
 
 import { TezosTokenizationService } from "./TezosTokenizationService";
 
@@ -53,6 +57,16 @@ export class TezosPlugin implements RunnerPlugin {
             (itemUpdatedEvent: ItemUpdatedEvent) =>
                 this.tezosTokenizationService.updateItem(
                     itemUpdatedEvent.item_id
+                )
+        );
+
+        this.eventBus.subscribe(
+            ItemAssignedEvent.name,
+            (itemAssignedEvent: ItemAssignedEvent) =>
+                this.tezosTokenizationService.assignItem(
+                    itemAssignedEvent.item_id,
+                    itemAssignedEvent.instance_number,
+                    itemAssignedEvent.user_id
                 )
         );
     }

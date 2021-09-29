@@ -11,6 +11,11 @@ module.exports = {
                 "%config.PGSQL_PASSWORD%",
                 "%config.PGSQL_DATABASE%"
             ]
-        }
+        },
+        knexTransactionManager: {
+            class: "./KnexTransactionManager",
+            arguments: ["@knex"]
+        },
+        transactionManager: "@knexTransactionManager"
     }
 };

@@ -2,8 +2,13 @@ module.exports = {
     services: {
         knexItemRepository: {
             class: "./KnexItemRepository",
-            arguments: ["@knex"]
+            arguments: ["@transactionManager"]
         },
-        itemRepository: "@knexItemRepository"
+        itemRepository: "@knexItemRepository",
+        knexItemInstanceRepository: {
+            class: "./KnexItemInstanceRepository",
+            arguments: ["@transactionManager"]
+        },
+        itemInstanceRepository: "@knexItemInstanceRepository"
     }
 };
