@@ -8,5 +8,5 @@ export abstract class JetStreamConsumer {
         return {};
     }
 
-    abstract handle<T>(msg: JetStreamMessage<T>): Promise<void>;
+    abstract handle(msg: JetStreamMessage<unknown>): Promise<void>;
 }

@@ -30,6 +30,7 @@
         "jest-environment-node": "^27.0.6",
         "nodemon": "^2.0.12",
         "prettier": "^2.3.2",
+        "tezos-work-queue": "*",
         "typescript": "^4.4"
     },
     "dependencies": {

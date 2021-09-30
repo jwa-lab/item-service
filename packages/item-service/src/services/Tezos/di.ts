@@ -40,6 +40,11 @@ module.exports = {
                 "@tezosTokenizationService",
                 "@natsConnection"
             ]
+        },
+        tezosConfirmationProcessor: {
+            class: "./TezosConfirmationProcessor",
+            tags: [{ name: "nats.consumer" }],
+            arguments: ["@logger", "@itemRepository", "@itemInstanceRepository"]
         }
     }
 };

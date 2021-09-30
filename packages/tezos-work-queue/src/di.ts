@@ -14,7 +14,7 @@ module.exports = {
         TezosWorkQueue: {
             class: "./TezosWorkQueue",
             tags: [{ name: "nats.consumer" }],
-            arguments: ["@logger", "@tezosClient"]
+            arguments: ["@logger", "@tezosClient", "@jetStreamClient"]
         }
     }
 };

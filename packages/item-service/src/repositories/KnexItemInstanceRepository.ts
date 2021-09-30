@@ -1,5 +1,8 @@
 import { ItemInstance } from "../entities/itemInstance";
-import { ItemInstanceRepository } from "./ItemInstanceRepository";
+import {
+    ItemInstanceRepository,
+    ItemInstanceTezosTokenizationInfo
+} from "./ItemInstanceRepository";
 import { KnexTransactionManager } from "../services/knex/KnexTransactionManager";
 
 export class KnexItemInstanceRepository implements ItemInstanceRepository {
@@ -16,5 +19,20 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
         );
 
         return result[0];
+    }
+
+    async updateItemInstanceTokenizationInfo(
+        item_id: number,
+        instance_number: number,
+        tezosTokenizationInfo: ItemInstanceTezosTokenizationInfo
+    ): Promise<void> {
+        const queryClient = await this.transactionManager.getProvider();
+
+        await queryClient(this.itemInstanceTable)
+            .where({
+                item_id,
+                instance_number
+            })
+            .update(tezosTokenizationInfo);
     }
 }
