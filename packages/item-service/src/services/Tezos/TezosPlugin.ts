@@ -32,7 +32,7 @@ export class TezosPlugin implements RunnerPlugin {
 
         jsm.streams.add({
             name: "TEZOS",
-            subjects: ["TEZOS.*"]
+            subjects: ["TEZOS.Execute", "TEZOS.Processed.*"]
         });
 
         const stream = await jsm.streams.find("TEZOS.*");

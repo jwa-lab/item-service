@@ -17,6 +17,8 @@ module.exports = {
                     "fulltext",
                     "TEXT GENERATED ALWAYS AS (flatten_item_data(data, name)) STORED"
                 );
+                table.string("tezos_contract_address");
+                table.string("tezos_block");
             });
         await knex.schema
             .dropTableIfExists("items_instances")
@@ -24,7 +26,9 @@ module.exports = {
                 table.integer("instance_number").notNullable();
                 table.integer("item_id").notNullable();
                 table.string("user_id").notNullable();
-                table.jsonb("data").notNullable();
+                table.jsonb("data").notNullable().defaultTo("{}");
+                table.string("tezos_contract_address");
+                table.string("tezos_block");
                 table.primary(["instance_number", "item_id"]);
             });
     }

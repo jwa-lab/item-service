@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "description": "Executes Operations on the Tezos Blockchain",
     "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "prettier": "npx prettier --write .",
         "lint": "eslint ./src/ --ext .ts --max-warnings 0",
@@ -12,6 +13,7 @@
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\""
     },
     "devDependencies": {
+        "@taquito/rpc": "^10.1.3",
         "@tsconfig/node14": "^1.0.1",
         "@typescript-eslint/eslint-plugin": "^4.4",
         "@typescript-eslint/parser": "^4.4",

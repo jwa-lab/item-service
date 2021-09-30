@@ -1,6 +1,11 @@
-import { JetStreamClient, JSONCodec, NatsConnection } from "nats";
+import {
+    JetStreamClient,
+    JSONCodec,
+    NatsConnection,
+    headers as natsHeaders
+} from "nats";
 import { Logger } from "common";
-import { OpKind } from "@taquito/taquito";
+import { OpKind, TransferParams } from "@taquito/taquito";
 
 import {
     WarehouseContract,
@@ -9,10 +14,7 @@ import {
 
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TokenizationService } from "../tokenization/TokenizationService";
-
-enum TezosCommands {
-    Execute = "TEZOS.Execute"
-}
+import { TezosEvents } from "./TezosEvents";
 
 export class TezosTokenizationService implements TokenizationService {
     private readonly jetStreamClient: JetStreamClient;
@@ -41,21 +43,11 @@ export class TezosTokenizationService implements TokenizationService {
             .add_item(...warehouseItem.toMichelsonArguments())
             .toTransferParams();
 
-        const tezosOperation = {
-            kind: OpKind.TRANSACTION,
-            ...operation
-        };
-
-        this.logger.debug(
-            `jetstream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
-        );
-
-        await this.jetStreamClient.publish(
-            TezosCommands.Execute,
-            this.jsonCodec.encode({
-                kind: OpKind.TRANSACTION,
-                ...operation
-            })
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemAdded,
+            JSON.stringify({ item_id }),
+            operation
         );
     }
 
@@ -73,21 +65,11 @@ export class TezosTokenizationService implements TokenizationService {
             .update_item(...warehouseItem.toMichelsonArguments())
             .toTransferParams();
 
-        const tezosOperation = {
-            kind: OpKind.TRANSACTION,
-            ...operation
-        };
-
-        this.logger.debug(
-            `jestream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
-        );
-
-        await this.jetStreamClient.publish(
-            TezosCommands.Execute,
-            this.jsonCodec.encode({
-                kind: OpKind.TRANSACTION,
-                ...operation
-            })
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemUpdated,
+            JSON.stringify({ item_id }),
+            operation
         );
     }
 
@@ -96,6 +78,8 @@ export class TezosTokenizationService implements TokenizationService {
         instance_number: number,
         user_id: string
     ): Promise<void> {
+        const item = await this.itemRepository.getItem(item_id);
+
         // node dependency injection doesn't support async factories
         // so they return a Promise with the value, hence the await here.
         // we should add a compilerPass with an async tag to work around this and maybe raise an issue with the library.
@@ -103,21 +87,39 @@ export class TezosTokenizationService implements TokenizationService {
             .assign_item(item_id, instance_number, user_id)
             .toTransferParams();
 
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemAssigned,
+            JSON.stringify({ item_id, instance_number }),
+            operation
+        );
+    }
+
+    private async executeOperation(
+        studioId: string,
+        tezosEvent: TezosEvents,
+        metadata: string,
+        operation: TransferParams
+    ): Promise<void> {
+        const headers = natsHeaders();
+
+        headers.append("studio_id", studioId);
+        headers.append("metadata", metadata);
+        headers.append("confirmation-subject", tezosEvent);
+
         const tezosOperation = {
             kind: OpKind.TRANSACTION,
             ...operation
         };
 
         this.logger.debug(
-            `jetstream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
+            `TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
         );
 
         await this.jetStreamClient.publish(
-            TezosCommands.Execute,
-            this.jsonCodec.encode({
-                kind: OpKind.TRANSACTION,
-                ...operation
-            })
+            "TEZOS.Execute",
+            this.jsonCodec.encode(tezosOperation),
+            { headers }
         );
     }
 }
