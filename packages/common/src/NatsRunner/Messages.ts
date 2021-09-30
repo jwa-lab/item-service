@@ -48,9 +48,7 @@ export class JetStreamMessage<T> {
 
   constructor(msg: JsMsg) {
     this.msg = msg;
-    this.data = String(msg.data)
-      ? JSONCodec<T>().decode(msg.data)
-      : null;
+    this.data = String(msg.data) ? JSONCodec<T>().decode(msg.data) : null;
   }
 }
 

@@ -36,5 +36,8 @@
   ],
   "scripts": {
     "prepare": "husky install"
+  },
+  "dependencies": {
+    "@taquito/rpc": "^10.1.3"
   }
 }

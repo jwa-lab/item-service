@@ -1,6 +1,11 @@
-import { JetStreamClient, JSONCodec, NatsConnection } from "nats";
+import {
+    JetStreamClient,
+    JSONCodec,
+    NatsConnection,
+    headers as natsHeaders
+} from "nats";
 import { Logger } from "common";
-import { OpKind } from "@taquito/taquito";
+import { OpKind, TransferParams } from "@taquito/taquito";
 
 import {
     WarehouseContract,
@@ -9,10 +14,7 @@ import {
 
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TokenizationService } from "../tokenization/TokenizationService";
-
-enum TezosCommands {
-    Execute = "TEZOS.Execute"
-}
+import { TezosEvents } from "./TezosEvents";
 
 export class TezosTokenizationService implements TokenizationService {
     private readonly jetStreamClient: JetStreamClient;
@@ -41,21 +43,11 @@ export class TezosTokenizationService implements TokenizationService {
             .add_item(...warehouseItem.toMichelsonArguments())
             .toTransferParams();
 
-        const tezosOperation = {
-            kind: OpKind.TRANSACTION,
-            ...operation
-        };
-
-        this.logger.debug(
-            `jetstream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
-        );
-
-        await this.jetStreamClient.publish(
-            TezosCommands.Execute,
-            this.jsonCodec.encode({
-                kind: OpKind.TRANSACTION,
-                ...operation
-            })
+        this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemAdded,
+            JSON.stringify(item),
+            operation
         );
     }
 
@@ -73,21 +65,39 @@ export class TezosTokenizationService implements TokenizationService {
             .update_item(...warehouseItem.toMichelsonArguments())
             .toTransferParams();
 
+        this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemUpdated,
+            JSON.stringify(item),
+            operation
+        );
+    }
+
+    private async executeOperation(
+        studioId: string,
+        tezosEvent: TezosEvents,
+        metadata: string,
+        operation: TransferParams
+    ): Promise<void> {
+        const headers = natsHeaders();
+
+        headers.append("X-Studio-Id", studioId);
+        headers.append("X-Metadata", metadata);
+        headers.append("X-Confirmation-Subject", tezosEvent);
+
         const tezosOperation = {
             kind: OpKind.TRANSACTION,
             ...operation
         };
 
         this.logger.debug(
-            `jestream:TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
+            `TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
         );
 
         await this.jetStreamClient.publish(
-            TezosCommands.Execute,
-            this.jsonCodec.encode({
-                kind: OpKind.TRANSACTION,
-                ...operation
-            })
+            "TEZOS.Execute",
+            this.jsonCodec.encode(tezosOperation),
+            { headers }
         );
     }
 }

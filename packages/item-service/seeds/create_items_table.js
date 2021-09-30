@@ -17,6 +17,8 @@ module.exports = {
                     "fulltext",
                     "TEXT GENERATED ALWAYS AS (flatten_item_data(data, name)) STORED"
                 );
+                table.string("tezosContractAddress");
+                table.string("tezosBlock");
             });
     }
 };

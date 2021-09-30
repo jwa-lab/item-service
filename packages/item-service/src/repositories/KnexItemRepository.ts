@@ -2,7 +2,7 @@ import { Knex } from "knex";
 
 import { Item } from "../entities/item";
 
-import { ItemRepository } from "./ItemRepository";
+import { ItemRepository, ItemTezosTokenizationInfo } from "./ItemRepository";
 
 export interface GetItemsInterface {
     results: Item[];
@@ -38,6 +38,15 @@ export class KnexItemRepository implements ItemRepository {
             .where("item_id", item.item_id);
 
         return result[0];
+    }
+
+    async updateItemTokenizationInfo(
+        item_id: number,
+        tezosTokenizationInfo: ItemTezosTokenizationInfo
+    ): Promise<void> {
+        await this.knex<ItemTezosTokenizationInfo>(this.itemTable)
+            .update(tezosTokenizationInfo)
+            .where("item_id", item_id);
     }
 
     async getItem(item_id: number): Promise<Item> {
