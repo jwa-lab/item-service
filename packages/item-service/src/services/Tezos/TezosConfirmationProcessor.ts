@@ -1,6 +1,8 @@
-import { JetStreamConsumer, JetStreamMessage, Logger } from "common";
 import { consumerOpts, ConsumerOptsBuilder, createInbox } from "nats";
-import { TezosWorkerTokenizationConfirmation } from "tezos-work-queue";
+
+import { JetStreamConsumer, JetStreamMessage, Logger } from "@jwalab/js-common";
+import { TezosWorkerTokenizationConfirmation } from "@jwalab/tezos-work-queue";
+
 import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TezosEvents } from "./TezosEvents";

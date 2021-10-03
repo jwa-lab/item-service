@@ -1,13 +1,10 @@
-FROM node:14-alpine
+FROM node:16-alpine
 
 WORKDIR /app
 
 COPY seeds ./seeds
-COPY src ./src
+COPY dist ./dist
 COPY package.json package-lock.json LICENSE tsconfig.json ./
-
-RUN npm install
-RUN npm run build
 
 USER node
 

@@ -1,5 +1,5 @@
 {
-    "name": "tezos-work-queue",
+    "name": "@jwalab/tezos-work-queue",
     "version": "0.0.1",
     "description": "Executes Operations on the Tezos Blockchain",
     "main": "dist/index.js",
@@ -17,7 +17,7 @@
         "@tsconfig/node14": "^1.0.1",
         "@typescript-eslint/eslint-plugin": "^4.4",
         "@typescript-eslint/parser": "^4.4",
-        "common": "*",
+        "@jwalab/js-common": "*",
         "concurrently": "^6.2.1",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",

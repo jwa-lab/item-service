@@ -24,17 +24,17 @@ jobs:
         steps:
             - checkout
             - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_ACCESS_KEY
-            - run: ./run docker-build-tag-push
+            - run: ./run build-docker-images
 workflows:
     ci-cd:
         jobs:
-            - lint
-            - test
+            # - lint
+            # - test
             - docker-push:
-                  requires:
-                      - lint
-                      - test
-                  filters:
-                      branches:
-                          only:
-                              - main
+                #   requires:
+                #       - lint
+                #       - test
+                #   filters:
+                #       branches:
+                #           only:
+                #               - main
