@@ -10,4 +10,5 @@ export interface ItemRepository {
         limit: number,
         studio_id: string
     ): Promise<GetItemsInterface>;
+    assignItem(item: Item, decrease_quantity: number): Promise<Item>;
 }

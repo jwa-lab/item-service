@@ -2,25 +2,25 @@ import * as winston from "winston";
 import { WinstonLogger } from "./WinstonLogger";
 
 export function makeWinstonLogger(
-  loggingFormat: string,
-  serviceName: string
+    loggingFormat: string,
+    serviceName: string
 ): WinstonLogger {
-  let transport;
+    let transport;
 
-  if (loggingFormat.toLocaleLowerCase() === "cli") {
-    transport = new winston.transports.Console({
-      format: winston.format.combine(winston.format.cli()),
-    });
-  } else {
-    transport = new winston.transports.Console();
-  }
+    if (loggingFormat.toLocaleLowerCase() === "cli") {
+        transport = new winston.transports.Console({
+            format: winston.format.combine(winston.format.cli())
+        });
+    } else {
+        transport = new winston.transports.Console();
+    }
 
-  return new WinstonLogger(
-    serviceName,
-    winston.createLogger({
-      level: "debug",
-      transports: transport,
-      levels: winston.config.syslog.levels,
-    })
-  );
+    return new WinstonLogger(
+        serviceName,
+        winston.createLogger({
+            level: "debug",
+            transports: transport,
+            levels: winston.config.syslog.levels
+        })
+    );
 }

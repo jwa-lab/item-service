@@ -8,36 +8,38 @@ import { PrivateHandler } from "../NatsRunner/Handlers";
 type OpenAPIDocs = Pick<OpenAPIV3.Document, "paths" | "components" | "tags">;
 
 export class GetDocsHandler extends PrivateHandler {
-  readonly subject = "docs";
-  readonly serviceScopedSubject = false;
-  private jsonDocs: OpenAPIDocs;
+    readonly subject = "docs";
+    readonly serviceScopedSubject = false;
+    private jsonDocs: OpenAPIDocs;
 
-  getSubscriptionOptions(): SubscriptionOptions {
-    return {
-      queue: this.SERVICE_NAME,
-    };
-  }
-
-  constructor(
-    private cwd: string,
-    private SERVICE_NAME: string,
-    private logger: Logger
-  ) {
-    super();
-
-    let jsonDocs;
-
-    try {
-      const docs = String(fs.readFileSync(`${this.cwd}/openapi-docs.json`));
-      jsonDocs = JSON.parse(docs);
-    } catch (err) {
-      this.logger.warning("Unable to load openapi docs.");
+    getSubscriptionOptions(): SubscriptionOptions {
+        return {
+            queue: this.SERVICE_NAME
+        };
     }
 
-    this.jsonDocs = jsonDocs;
-  }
+    constructor(
+        private cwd: string,
+        private SERVICE_NAME: string,
+        private logger: Logger
+    ) {
+        super();
 
-  async handle(): Promise<OpenAPIDocs> {
-    return this.jsonDocs;
-  }
+        let jsonDocs;
+
+        try {
+            const docs = String(
+                fs.readFileSync(`${this.cwd}/openapi-docs.json`)
+            );
+            jsonDocs = JSON.parse(docs);
+        } catch (err) {
+            this.logger.warning("Unable to load openapi docs.");
+        }
+
+        this.jsonDocs = jsonDocs;
+    }
+
+    async handle(): Promise<OpenAPIDocs> {
+        return this.jsonDocs;
+    }
 }
