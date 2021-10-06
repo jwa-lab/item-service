@@ -1,6 +1,6 @@
 import { AckPolicy, NatsConnection } from "nats";
 
-import { EventBus, Logger, RunnerPlugin } from "common";
+import { EventBus, Logger, RunnerPlugin } from "@jwalab/js-common";
 
 import {
     ItemAssignedEvent,

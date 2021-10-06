@@ -1,6 +1,6 @@
 import { WarehouseContract } from "@jwalab/tokenization-service-contracts";
 import { TezosToolkit } from "@taquito/taquito";
-import { Logger } from "common";
+import { Logger } from "@jwalab/js-common";
 
 export async function loadTezosWarehouseContract(
     logger: Logger,

@@ -4,7 +4,7 @@ import {
     NatsConnection,
     headers as natsHeaders
 } from "nats";
-import { Logger } from "common";
+import { Logger } from "@jwalab/js-common";
 import { OpKind, TransferParams } from "@taquito/taquito";
 
 import {

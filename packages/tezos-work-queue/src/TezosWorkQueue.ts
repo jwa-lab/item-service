@@ -6,7 +6,7 @@ import {
 } from "@taquito/taquito";
 import { BlockResponse } from "@taquito/rpc";
 
-import { JetStreamMessage, Logger, JetStreamConsumer } from "common";
+import { JetStreamMessage, Logger, JetStreamConsumer } from "@jwalab/js-common";
 
 import {
     consumerOpts,
