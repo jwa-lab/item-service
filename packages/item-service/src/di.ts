@@ -8,6 +8,7 @@ module.exports = {
         { resource: "./natsHandlers/updateItem/di" },
         { resource: "./natsHandlers/assignItem/di" },
         { resource: "./natsHandlers/getItem/di" },
-        { resource: "./natsHandlers/getItems/di" }
+        { resource: "./natsHandlers/getItems/di" },
+        { resource: "./natsHandlers/getItemInstance/di" }
     ]
 };
