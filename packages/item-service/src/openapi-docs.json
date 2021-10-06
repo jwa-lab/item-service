@@ -231,6 +231,56 @@
                     }
                 }
             }
+        },
+        "/item-service/item-instance": {
+            "put": {
+                "tags": ["item-service"],
+                "summary": "Update an item instance data.",
+                "operationId": "updateItemInstance",
+                "requestBody": {
+                    "description": "Update an existing item instance data.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "item_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "instance_number": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "data": {
+                                        "type": "object",
+                                        "example": {
+                                            "level": 200,
+                                            "type": "Armor"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemInstance"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -292,6 +342,31 @@
                             "perPage": 10,
                             "to": 10,
                             "total": 1
+                        }
+                    }
+                }
+            },
+            "Instance": {
+                "type": "object",
+                "properties": {
+                    "item_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 167
+                    },
+                    "instance_number": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 9
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "example": "Mr 2"
+                    },
+                    "data": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
                         }
                     }
                 }

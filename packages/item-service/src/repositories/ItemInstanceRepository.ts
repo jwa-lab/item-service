@@ -7,9 +7,12 @@ export interface ItemInstanceTezosTokenizationInfo {
 
 export interface ItemInstanceRepository {
     createInstance(itemInstance: ItemInstance): Promise<ItemInstance>;
+
     updateItemInstanceTokenizationInfo(
         item_id: number,
         instance_number: number,
         tezosTokenizationInfo: ItemInstanceTezosTokenizationInfo
     ): Promise<void>;
+
+    updateItemInstance(itemInstance: ItemInstance): Promise<ItemInstance>;
 }
