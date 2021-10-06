@@ -327,6 +327,53 @@
                     }
                 }
             }
+        },
+        "/item-service/transfer-instance": {
+            "post": {
+                "tags": ["item-service"],
+                "summary": "Transfer an item instance from a player to another.",
+                "operationId": "transferItemInstance",
+                "requestBody": {
+                    "description": "Transfer an existing item instance from a player to another.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "item_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "instance_number": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "to_user_id": {
+                                        "type": "string",
+                                        "example": "player_b"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ItemInstance"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
         }
     },
     "components": {

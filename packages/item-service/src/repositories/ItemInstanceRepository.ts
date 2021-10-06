@@ -21,4 +21,9 @@ export interface ItemInstanceRepository {
         item_id: number,
         instance_number: number
     ): Promise<ItemInstance>;
+    transferItemInstance(
+        item_id: number,
+        instance_number: number,
+        to_user_id: string
+    ): Promise<ItemInstance>;
 }

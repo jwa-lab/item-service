@@ -5,6 +5,7 @@ import { EventBus, Logger, RunnerPlugin } from "@jwalab/js-common";
 import {
     ItemAssignedEvent,
     ItemCreatedEvent,
+    ItemInstanceTransferredEvent,
     ItemInstanceUpdatedEvent,
     ItemUpdatedEvent
 } from "../../events/item";
@@ -78,6 +79,16 @@ export class TezosPlugin implements RunnerPlugin {
                     itemInstanceUpdatedEvent.item_id,
                     itemInstanceUpdatedEvent.instance_number,
                     itemInstanceUpdatedEvent.data
+                )
+        );
+
+        this.eventBus.subscribe(
+            ItemInstanceTransferredEvent.name,
+            (itemInstanceTransferredEvent: ItemInstanceTransferredEvent) =>
+                this.tezosTokenizationService.transferItemInstance(
+                    itemInstanceTransferredEvent.item_id,
+                    itemInstanceTransferredEvent.instance_number,
+                    itemInstanceTransferredEvent.to_user_id
                 )
         );
     }

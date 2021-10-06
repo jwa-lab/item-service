@@ -7,4 +7,9 @@ export interface TokenizationService {
         instance_number: number,
         data: Record<string, string>
     ): void;
+    transferItemInstance(
+        item_id: number,
+        instance_number: number,
+        to_user_id: string
+    ): void;
 }

@@ -10,6 +10,7 @@ module.exports = {
         { resource: "./natsHandlers/getItem/di" },
         { resource: "./natsHandlers/getItems/di" },
         { resource: "./natsHandlers/updateItemInstance/di" },
-        { resource: "./natsHandlers/getItemInstance/di" }
+        { resource: "./natsHandlers/getItemInstance/di" },
+        { resource: "./natsHandlers/transferItemInstance/di" }
     ]
 };
