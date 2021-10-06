@@ -30,3 +30,17 @@ export class ItemAssignedEvent implements EventBusEvent {
         this.user_id = user_id;
     }
 }
+
+export class ItemInstanceUpdatedEvent implements EventBusEvent {
+    name = "ItemInstanceUpdatedEvent";
+
+    constructor(
+        readonly item_id: number,
+        readonly instance_number: number,
+        readonly data: Record<string, string>
+    ) {
+        this.item_id = item_id;
+        this.instance_number = instance_number;
+        this.data = data;
+    }
+}
