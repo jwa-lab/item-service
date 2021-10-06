@@ -47,7 +47,7 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
         const result = await queryClient<ItemInstance>(this.itemInstanceTable)
             .update({ data }, "*")
             .where("item_id", item_id)
-            .andWhere("instance_number", instance_number + 1000);
+            .andWhere("instance_number", instance_number);
 
         if (result.length === 0) {
             throw new SQLUpdateNoRowsAffected(
