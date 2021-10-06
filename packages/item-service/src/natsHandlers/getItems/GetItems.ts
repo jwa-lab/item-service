@@ -8,7 +8,7 @@ import {
     Logger,
     Message,
     PrivateHandler
-} from "common";
+} from "@jwalab/js-common";
 
 import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
