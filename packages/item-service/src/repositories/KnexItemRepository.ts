@@ -2,6 +2,7 @@ import { KnexTransactionManager } from "../services/knex/KnexTransactionManager"
 import { Item } from "../entities/item";
 
 import { ItemRepository, ItemTezosTokenizationInfo } from "./ItemRepository";
+import { SQLUpdateNoRowsAffected } from "common";
 
 export interface GetItemsInterface {
     results: Item[];
@@ -108,7 +109,9 @@ export class KnexItemRepository implements ItemRepository {
             .andWhere("available_quantity", item.available_quantity);
 
         if (result.length === 0) {
-            throw new Error("No lines updated.");
+            throw new SQLUpdateNoRowsAffected(
+                "No lines updated, please try again."
+            );
         }
 
         return result[0];

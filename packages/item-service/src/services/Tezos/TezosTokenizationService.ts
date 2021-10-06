@@ -15,6 +15,7 @@ import {
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TokenizationService } from "../tokenization/TokenizationService";
 import { TezosEvents } from "./TezosEvents";
+import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 
 export class TezosTokenizationService implements TokenizationService {
     private readonly jetStreamClient: JetStreamClient;
@@ -23,6 +24,7 @@ export class TezosTokenizationService implements TokenizationService {
     constructor(
         private readonly logger: Logger,
         private readonly itemRepository: ItemRepository,
+        private readonly itemInstanceRepository: ItemInstanceRepository,
         private readonly tezosWarehouseContract: Promise<WarehouseContract>,
         natsConnection: NatsConnection
     ) {
@@ -93,6 +95,33 @@ export class TezosTokenizationService implements TokenizationService {
             JSON.stringify({ item_id, instance_number }),
             operation
         );
+    }
+
+    //@TODO - Uncomment when getInstance is merged, anti-typescript comment will be deleted.
+    async updateItemInstance(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        item_id: number,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        instance_number: number
+    ): Promise<void> {
+        /*
+        const itemInstance = await this.itemInstanceRepository.getInstance(item_id, instance_number);
+        const item = await this.itemRepository.getItem(item_id);
+
+        // node dependency injection doesn't support async factories
+        // so they return a Promise with the value, hence the await here.
+        // we should add a compilerPass with an async tag to work around this and maybe raise an issue with the library.
+        const operation = (await this.tezosWarehouseContract).methods
+            .update_instance(item_id, instance_number, itemInstance.data)
+            .toTransferParams();
+
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemInstanceUpdated,
+            JSON.stringify({ item_id, instance_number }),
+            operation
+        );
+         */
     }
 
     private async executeOperation(

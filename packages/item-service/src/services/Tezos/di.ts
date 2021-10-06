@@ -27,6 +27,7 @@ module.exports = {
             arguments: [
                 "@logger",
                 "@itemRepository",
+                "@itemInstanceRepository",
                 "@tezosWarehouseContract",
                 "@natsConnection"
             ]

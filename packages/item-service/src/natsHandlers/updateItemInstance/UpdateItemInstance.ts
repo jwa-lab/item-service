@@ -11,7 +11,7 @@ import {
     PrivateHandler
 } from "common";
 import { ItemInstance } from "../../entities/itemInstance";
-import { ItemUpdatedEvent } from "../../events/item";
+import { ItemInstanceUpdatedEvent } from "../../events/item";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemRepository } from "../../repositories/ItemRepository";
 
@@ -121,17 +121,11 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
             throw new Error("Invalid studio, you cannot update this item.");
         }
 
-        /*
-                Should do a getInstance to check if the instance exist. Handler not yet implemented in this branch.
-         */
-
-        /*
-            Is it too confusing ? As we will only update the data and ignore any potential modification on the other fields ?
-            Therefore should we only ask for item_id, item_instance and data ?
-         */
         const itemInstance =
             await this.itemInstanceRepository.updateItemInstance(
-                new ItemInstance(msg.data as ItemInstance)
+                item_id,
+                instance_number,
+                data
             );
 
         this.logger.info(
@@ -139,7 +133,10 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
         );
 
         this.eventBus.publish(
-            new ItemUpdatedEvent(itemInstance.item_id as number)
+            new ItemInstanceUpdatedEvent(
+                itemInstance.item_id,
+                itemInstance.instance_number
+            )
         );
 
         return itemInstance;

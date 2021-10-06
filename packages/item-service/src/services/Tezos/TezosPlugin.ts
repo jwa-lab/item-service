@@ -5,6 +5,7 @@ import { EventBus, Logger, RunnerPlugin } from "common";
 import {
     ItemAssignedEvent,
     ItemCreatedEvent,
+    ItemInstanceUpdatedEvent,
     ItemUpdatedEvent
 } from "../../events/item";
 
@@ -67,6 +68,15 @@ export class TezosPlugin implements RunnerPlugin {
                     itemAssignedEvent.item_id,
                     itemAssignedEvent.instance_number,
                     itemAssignedEvent.user_id
+                )
+        );
+
+        this.eventBus.subscribe(
+            ItemInstanceUpdatedEvent.name,
+            (itemInstanceUpdatedEvent: ItemInstanceUpdatedEvent) =>
+                this.tezosTokenizationService.updateItemInstance(
+                    itemInstanceUpdatedEvent.item_id,
+                    itemInstanceUpdatedEvent.instance_number
                 )
         );
     }

@@ -4,6 +4,7 @@ import {
     ItemInstanceRepository,
     ItemInstanceTezosTokenizationInfo
 } from "./ItemInstanceRepository";
+import { SQLUpdateNoRowsAffected } from "common";
 
 export class KnexItemInstanceRepository implements ItemInstanceRepository {
     private readonly itemInstanceTable = "items_instances";
@@ -37,14 +38,22 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
     }
 
     async updateItemInstance(
-        itemInstance: ItemInstance
+        item_id: number,
+        instance_number: number,
+        data: Record<string, string>
     ): Promise<ItemInstance> {
         const queryClient = await this.transactionManager.getProvider();
 
         const result = await queryClient<ItemInstance>(this.itemInstanceTable)
-            .update({ data: itemInstance.data }, Object.keys(itemInstance))
-            .where("item_id", itemInstance.item_id)
-            .andWhere("instance_number", itemInstance.instance_number);
+            .update({ data }, "*")
+            .where("item_id", item_id)
+            .andWhere("instance_number", instance_number + 1000);
+
+        if (result.length === 0) {
+            throw new SQLUpdateNoRowsAffected(
+                "No lines updated, maybe no instance for this record key ?"
+            );
+        }
 
         return result[0];
     }

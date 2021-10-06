@@ -14,5 +14,9 @@ export interface ItemInstanceRepository {
         tezosTokenizationInfo: ItemInstanceTezosTokenizationInfo
     ): Promise<void>;
 
-    updateItemInstance(itemInstance: ItemInstance): Promise<ItemInstance>;
+    updateItemInstance(
+        item_id: number,
+        item_instance: number,
+        data: Record<string, string>
+    ): Promise<ItemInstance>;
 }
