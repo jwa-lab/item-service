@@ -17,7 +17,7 @@ jobs:
         steps:
             - checkout
             - run: npm install
-            - run: npm run build -w common
+            - run: npm run build -w @jwalab/js-common
             - run: npm run test --ws --if-present
     docker-push:
         machine: true

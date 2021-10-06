@@ -36,7 +36,7 @@ npm install
 Then make sure the common code is available for all to use:
 
 ```
-npm run build -w common
+npm run build -w @jwalab/js-common
 ```
 
 ### Run
@@ -50,19 +50,19 @@ npx @jwalab/minilab start
 Then, start the postgres DB
 
 ```
-npm run start-db -w item-service
+npm run start-db -w @jwalab/item-service
 ```
 
 Seed the DB:
 
 ```
-npm run seed-db -w item-service
+npm run seed-db -w @jwalab/item-service
 ```
 
 Deploy the Warehouse contract:
 
 ```
-npm run deploy-warehouse -w item-service
+npm run deploy-warehouse -w @jwalab/item-service
 ```
 
 Notice the new contract address and paste it in the `.env` file under `WAREHOUSE_CONTRACT_ADDRESS`
@@ -70,11 +70,11 @@ Notice the new contract address and paste it in the `.env` file under `WAREHOUSE
 Start the `item-service`
 
 ```
-npm run dev -w item-service
+npm run dev -w @jwalab/item-service
 ```
 
 And start the `tezos-work-queue`
 
 ```
-npm run dev -w tezos-work-queue
+npm run dev -w @jwalab/tezos-work-queue
 ```

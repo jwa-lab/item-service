@@ -1,5 +1,5 @@
 {
-    "name": "item-service",
+    "name": "@jwalab/item-service",
     "version": "0.0.1",
     "description": "Store and Retrieve Items and Item instances",
     "main": "dist/index.js",
@@ -18,11 +18,12 @@
     "devDependencies": {
         "@babel/preset-env": "^7.15.6",
         "@babel/preset-typescript": "^7.15.0",
+        "@jwalab/js-common": "*",
+        "@jwalab/tezos-work-queue": "*",
         "@tsconfig/node14": "^1.0.1",
         "@types/jest": "^27.0.1",
         "@typescript-eslint/eslint-plugin": "^4.4",
         "@typescript-eslint/parser": "^4.4",
-        "common": "*",
         "concurrently": "^6.2.1",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
@@ -30,7 +31,6 @@
         "jest-environment-node": "^27.0.6",
         "nodemon": "^2.0.12",
         "prettier": "^2.3.2",
-        "tezos-work-queue": "*",
         "typescript": "^4.4"
     },
     "dependencies": {
