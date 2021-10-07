@@ -2,42 +2,33 @@
 
 set -euo pipefail
 
+services="item-service tezos-work-queue"
+
 function docker-build() {
-    pushd ./packages/item-service
-    docker build . -t jwalab/$name
-    popd
-    pushd ./packages/tezos-work-queue
-    docker build . -t jwalab/$name
-    popd
+    for service in ${services[@]}
+    do
+        pushd packages/${service}
+        ./run docker-build
+        popd
+    done
 }
 
 function docker-tag() {
-    for tag in ${tags[@]}
+    for service in ${services[@]}
     do
-        docker tag jwalab/$name jwalab/$name:$tag
+        pushd packages/${service}
+        ./run docker-tag
+        popd
     done
 }
 
 function docker-push() {
-    docker push jwalab/$name
-    for tag in ${tags[@]}
+    for service in ${services[@]}
     do
-        docker push jwalab/$name:$tag
+        pushd packages/${service}
+        ./run docker-push
+        popd
     done
-}
-
-function docker-build-tag-push() {
-    pushd ./packages/item-service
-    ./run docker-build
-    ./run docker-tag
-    ./run docker-push
-    popd
-
-    pushd ./packages/tezos-work-queue
-    ./run docker-build
-    ./run docker-tag
-    ./run docker-push
-    popd
 }
 
 "$@"

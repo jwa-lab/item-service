@@ -24,7 +24,9 @@ jobs:
         steps:
             - checkout
             - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_ACCESS_KEY
-            - run: ./run docker-build-tag-push
+            - run: ./run docker-build
+            - run: ./run docker-tag
+            - run: ./run docker-push
 workflows:
     ci-cd:
         jobs:
