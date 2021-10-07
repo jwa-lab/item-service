@@ -5,7 +5,7 @@ import {
     headers as natsHeaders
 } from "nats";
 import { Logger } from "@jwalab/js-common";
-import { OpKind, TransferParams } from "@taquito/taquito";
+import { MichelsonMap, OpKind, TransferParams } from "@taquito/taquito";
 
 import {
     WarehouseContract,
@@ -14,6 +14,8 @@ import {
 
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TokenizationService } from "../tokenization/TokenizationService";
+import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
+
 import { TezosEvents } from "./TezosEvents";
 
 export class TezosTokenizationService implements TokenizationService {
@@ -23,6 +25,7 @@ export class TezosTokenizationService implements TokenizationService {
     constructor(
         private readonly logger: Logger,
         private readonly itemRepository: ItemRepository,
+        private readonly itemInstanceRepository: ItemInstanceRepository,
         private readonly tezosWarehouseContract: Promise<WarehouseContract>,
         natsConnection: NatsConnection
     ) {
@@ -90,6 +93,32 @@ export class TezosTokenizationService implements TokenizationService {
         await this.executeOperation(
             item.studio_id,
             TezosEvents.ItemAssigned,
+            JSON.stringify({ item_id, instance_number }),
+            operation
+        );
+    }
+
+    async updateItemInstance(
+        item_id: number,
+        instance_number: number,
+        data: Record<string, string>
+    ): Promise<void> {
+        const item = await this.itemRepository.getItem(item_id);
+        const michelsonMap = MichelsonMap.fromLiteral(data) as MichelsonMap<
+            string,
+            string
+        >;
+
+        // node dependency injection doesn't support async factories
+        // so they return a Promise with the value, hence the await here.
+        // we should add a compilerPass with an async tag to work around this and maybe raise an issue with the library.
+        const operation = (await this.tezosWarehouseContract).methods
+            .update_instance(item_id, instance_number, michelsonMap)
+            .toTransferParams();
+
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemInstanceUpdated,
             JSON.stringify({ item_id, instance_number }),
             operation
         );

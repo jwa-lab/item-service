@@ -4,6 +4,7 @@ import {
     ItemInstanceTezosTokenizationInfo
 } from "./ItemInstanceRepository";
 import { KnexTransactionManager } from "../services/knex/KnexTransactionManager";
+import { SQLUpdateNoRowsAffected } from "@jwalab/js-common";
 
 export class KnexItemInstanceRepository implements ItemInstanceRepository {
     private readonly itemInstanceTable = "items_instances";
@@ -13,10 +14,9 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
     async createInstance(itemInstance: ItemInstance): Promise<ItemInstance> {
         const queryClient = await this.transactionManager.getProvider();
 
-        const result = await queryClient(this.itemInstanceTable).insert(
-            itemInstance,
-            Object.keys(itemInstance)
-        );
+        const result = await queryClient<ItemInstance>(
+            this.itemInstanceTable
+        ).insert(itemInstance, Object.keys(itemInstance));
 
         return result[0];
     }
@@ -44,8 +44,33 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
 
         const result = await queryClient<ItemInstance>(this.itemInstanceTable)
             .select()
-            .where("item_id", item_id)
-            .andWhere("instance_number", instance_number);
+            .where({
+                item_id,
+                instance_number
+            });
+
+        return result[0];
+    }
+
+    async updateItemInstance(
+        item_id: number,
+        instance_number: number,
+        data: Record<string, string>
+    ): Promise<ItemInstance> {
+        const queryClient = await this.transactionManager.getProvider();
+
+        const result = await queryClient<ItemInstance>(this.itemInstanceTable)
+            .update({ data }, "*")
+            .where({
+                item_id,
+                instance_number
+            });
+
+        if (result.length === 0) {
+            throw new SQLUpdateNoRowsAffected(
+                "No lines updated, maybe no instance for this record key ?"
+            );
+        }
 
         return result[0];
     }

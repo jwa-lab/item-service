@@ -13,7 +13,7 @@ Start by creating a `.env` file in this project's top level folderwith the follo
 SERVICE_NAME=item-service
 NATS_URL=nats://localhost:4222
 TEZOS_RPC_URI=http://localhost:20000
-TEZOS_SECRET_KEY=edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq  
+TEZOS_SECRET_KEY=edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq
 TEZOS_PUBLIC_KEY_HASH=tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb
 WAREHOUSE_CONTRACT_ADDRESS=KT1NxT1X7H95ECnGkCGRywmzYencNe2sQS2i
 LOGGING_FORMAT=cli
