@@ -1,13 +1,12 @@
-FROM node:14-alpine
+FROM node:16-alpine as build
 
-WORKDIR /app
+WORKDIR /build
 
-COPY src ./src
-COPY package.json package-lock.json LICENSE tsconfig.json ./
+COPY . .
 
 RUN npm install
-RUN npm run build
+RUN npm run build -w @jwalab/tezos-work-queue
 
 USER node
 
-ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT ["npm", "run", "-w", "@jwalab/tezos-work-queue"]

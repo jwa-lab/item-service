@@ -29,7 +29,7 @@ tezosClient.setProvider({
 
         const contract = await operation.contract(1, 1);
 
-        console.log("contract deployed at " + contract.address);
+        console.log(contract.address);
     } catch (e) {
         console.error(e);
     }
