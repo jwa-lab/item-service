@@ -35,4 +35,18 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
             })
             .update(tezosTokenizationInfo);
     }
+
+    async getInstance(
+        item_id: number,
+        instance_number: number
+    ): Promise<ItemInstance> {
+        const queryClient = await this.transactionManager.getProvider();
+
+        const result = await queryClient<ItemInstance>(this.itemInstanceTable)
+            .select()
+            .where("item_id", item_id)
+            .andWhere("instance_number", instance_number);
+
+        return result[0];
+    }
 }

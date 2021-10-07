@@ -12,4 +12,8 @@ export interface ItemInstanceRepository {
         instance_number: number,
         tezosTokenizationInfo: ItemInstanceTezosTokenizationInfo
     ): Promise<void>;
+    getInstance(
+        item_id: number,
+        instance_number: number
+    ): Promise<ItemInstance>;
 }

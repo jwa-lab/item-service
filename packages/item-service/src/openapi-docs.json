@@ -231,6 +231,52 @@
                     }
                 }
             }
+        },
+        "/item-service/instance/{item_id}/{instance_number}": {
+            "get": {
+                "tags": ["item-service"],
+                "summary": "Get an item instance given its item_id and instance_number",
+                "operationId": "getItemInstance",
+                "parameters": [
+                    {
+                        "name": "item_id",
+                        "in": "path",
+                        "description": "id of item",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 167
+                        }
+                    },
+                    {
+                        "name": "instance_number",
+                        "in": "path",
+                        "description": "number of the item instance to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 9
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Instance"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -292,6 +338,31 @@
                             "perPage": 10,
                             "to": 10,
                             "total": 1
+                        }
+                    }
+                }
+            },
+            "Instance": {
+                "type": "object",
+                "properties": {
+                    "item_id": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 167
+                    },
+                    "instance_number": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 9
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "example": "Mr 2"
+                    },
+                    "data": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
                         }
                     }
                 }
