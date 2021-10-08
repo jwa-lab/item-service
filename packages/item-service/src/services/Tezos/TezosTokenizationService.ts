@@ -1,8 +1,8 @@
 import {
+    headers as natsHeaders,
     JetStreamClient,
     JSONCodec,
-    NatsConnection,
-    headers as natsHeaders
+    NatsConnection
 } from "nats";
 import { Logger } from "@jwalab/js-common";
 import { MichelsonMap, OpKind, TransferParams } from "@taquito/taquito";
@@ -114,6 +114,28 @@ export class TezosTokenizationService implements TokenizationService {
         // we should add a compilerPass with an async tag to work around this and maybe raise an issue with the library.
         const operation = (await this.tezosWarehouseContract).methods
             .update_instance(item_id, instance_number, michelsonMap)
+            .toTransferParams();
+
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemInstanceUpdated,
+            JSON.stringify({ item_id, instance_number }),
+            operation
+        );
+    }
+
+    async transferItemInstance(
+        item_id: number,
+        instance_number: number,
+        to_user_id: string
+    ): Promise<void> {
+        const item = await this.itemRepository.getItem(item_id);
+
+        // node dependency injection doesn't support async factories
+        // so they return a Promise with the value, hence the await here.
+        // we should add a compilerPass with an async tag to work around this and maybe raise an issue with the library.
+        const operation = (await this.tezosWarehouseContract).methods
+            .transfer_instance(item_id, instance_number, to_user_id)
             .toTransferParams();
 
         await this.executeOperation(

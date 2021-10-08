@@ -74,4 +74,27 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
 
         return result[0];
     }
+
+    async transferItemInstance(
+        item_id: number,
+        instance_number: number,
+        to_user_id: string
+    ): Promise<ItemInstance> {
+        const queryClient = await this.transactionManager.getProvider();
+
+        const result = await queryClient<ItemInstance>(this.itemInstanceTable)
+            .update({ user_id: to_user_id }, "*")
+            .where({
+                item_id,
+                instance_number
+            });
+
+        if (result.length === 0) {
+            throw new SQLUpdateNoRowsAffected(
+                "No lines updated, please verify your input or retry your request."
+            );
+        }
+
+        return result[0];
+    }
 }
