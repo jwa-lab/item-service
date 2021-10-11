@@ -108,12 +108,22 @@ export class GetItemInstanceHandler extends PrivateHandler {
             instance_number
         );
 
+        const aggregatedData = {
+            ...requiredItem.data,
+            ...fetchedInstance.data
+        };
+
+        const aggregatedInstance = new ItemInstance({
+            ...fetchedInstance,
+            data: aggregatedData
+        });
+
         if (!fetchedInstance) {
             throw new Error(
                 `No instance match for [item: ${item_id}, instance: ${instance_number}]`
             );
         }
 
-        return fetchedInstance;
+        return aggregatedInstance;
     }
 }
