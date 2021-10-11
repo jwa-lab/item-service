@@ -10,7 +10,7 @@ declare -a tags=(
 declare name=$(node -p -e "require('./package.json').name.substring(1)")
 
 function docker-build() {
-    docker build -t ${name} -f Dockerfile ../..
+    docker build -t ${name} .
 }
 
 function docker-tag() {

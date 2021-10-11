@@ -1,12 +1,15 @@
-FROM node:16-alpine as build
+FROM node:16-alpine
 
-WORKDIR /build
+WORKDIR /app
 
-COPY . .
+COPY seeds ./seeds
+COPY src ./src
+COPY tezos ./tezos
+COPY package*.json LICENSE tsconfig.json ./
 
 RUN npm install
-RUN npm run build -w @jwalab/item-service
+RUN npm run build
 
 USER node
 
-ENTRYPOINT ["npm", "run", "-w", "@jwalab/item-service"]
+ENTRYPOINT ["npm", "run"]

@@ -19,24 +19,46 @@ jobs:
             - run: npm install
             - run: npm run build -w @jwalab/js-common
             - run: npm run test --ws --if-present
+    npm-publish:
+        executor:
+            name: node/default
+            tag: "16.6"
+        steps:
+            - checkout
+            - run:
+                name: Authenticate with NPM
+                command: echo "//registry.npmjs.org/:_authToken=${NPM_JWALAB_ORGANIZATION_API_TOKEN}" > ~/.npmrc
+            - run: npm install
+            - run: npm run build -w @jwalab/js-common
+            - run: npm publish -w @jwalab/js-common --access=public || true
+            - run: npm run build -w @jwalab/tezos-work-queue
+            - run: npm publish -w @jwalab/tezos-work-queue --access=public || true
     docker-push:
         machine: true
         steps:
             - checkout
-            - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_ACCESS_KEY
             - run: ./run docker-build
             - run: ./run docker-tag
+            - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_ACCESS_KEY
             - run: ./run docker-push
+
 workflows:
     ci-cd:
         jobs:
             - lint
             - test
+            - npm-publish:
+                requires:
+                    - lint
+                    - test
+                filters:
+                    branches:
+                        only:
+                            - main
             - docker-push:
-                  requires:
-                      - lint
-                      - test
-                  filters:
-                      branches:
-                          only:
-                              - main
+                requires:
+                    - npm-publish
+                filters:
+                    branches:
+                        only:
+                            - main
