@@ -11,6 +11,7 @@ module.exports = {
         { resource: "./natsHandlers/getItems/di" },
         { resource: "./natsHandlers/updateItemInstance/di" },
         { resource: "./natsHandlers/getItemInstance/di" },
+        { resource: "./natsHandlers/getItemInstances/di" },
         { resource: "./natsHandlers/transferItemInstance/di" }
     ]
 };

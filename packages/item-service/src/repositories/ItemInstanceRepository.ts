@@ -1,4 +1,5 @@
 import { ItemInstance } from "../entities/itemInstance";
+import { GetItemInstancesInterface } from "./KnexItemInstanceRepository";
 
 export interface ItemInstanceTezosTokenizationInfo {
     tezos_contract_address: string;
@@ -26,4 +27,10 @@ export interface ItemInstanceRepository {
         instance_number: number,
         to_user_id: string
     ): Promise<ItemInstance>;
+    getItemInstances(
+        start: number,
+        limit: number,
+        studio_id: string,
+        user_id?: string
+    ): Promise<GetItemInstancesInterface>;
 }

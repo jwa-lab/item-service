@@ -6,6 +6,11 @@ import {
 import { KnexTransactionManager } from "../services/knex/KnexTransactionManager";
 import { SQLUpdateNoRowsAffected } from "@jwalab/js-common";
 
+export interface GetItemInstancesInterface {
+    results: ItemInstance[];
+    pagination: Record<string, unknown>;
+}
+
 export class KnexItemInstanceRepository implements ItemInstanceRepository {
     private readonly itemInstanceTable = "items_instances";
 
@@ -96,5 +101,39 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
         }
 
         return result[0];
+    }
+
+    async getItemInstances(
+        start: number,
+        limit: number,
+        studio_id: string,
+        user_id?: string
+    ): Promise<GetItemInstancesInterface> {
+        const queryClient = await this.transactionManager.getProvider();
+        const whereStatement = {
+            ...(user_id && { user_id })
+        };
+
+        const totalQuery = await queryClient(this.itemInstanceTable)
+            .where(whereStatement)
+            .count("*")
+            .first();
+
+        const results = await queryClient<ItemInstance>(this.itemInstanceTable)
+            .select()
+            .where(whereStatement)
+            .offset(start)
+            .limit(limit);
+
+        const pagination = {
+            from: start,
+            count: results.length,
+            total: Number(totalQuery?.count)
+        };
+
+        return {
+            results,
+            pagination
+        };
     }
 }
