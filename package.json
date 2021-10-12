@@ -1,6 +1,5 @@
 {
   "name": "item-service",
-  "version": "0.0.1",
   "description": "Store and Retrieve Items and Item instances",
   "private": true,
   "repository": {

@@ -5,7 +5,7 @@ WORKDIR /app
 COPY seeds ./seeds
 COPY src ./src
 COPY tezos ./tezos
-COPY package*.json LICENSE tsconfig.json ./
+COPY package*.json LICENSE tsconfig.json knexfile.js ./
 
 RUN npm install
 RUN npm run build
