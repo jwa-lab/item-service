@@ -72,4 +72,101 @@ describe("Given GetItemInstance Handler", () => {
             });
         });
     });
+
+    describe("When called with an item with existing data", () => {
+        let response;
+
+        beforeEach(async () => {
+            itemRepository.getItem.mockReturnValue({
+                item_id: 1,
+                studio_id: "studio_id",
+                name: "laboris ut eu",
+                available_quantity: 10,
+                total_quantity: 10,
+                is_frozen: false,
+                data: {
+                    object: "car"
+                }
+            });
+
+            itemInstanceRepository.getInstance.mockReturnValue({
+                instance_number: 1,
+                item_id: 1,
+                user_id: "Mr 2",
+                data: {
+                    some: "thing"
+                }
+            });
+
+            response = await getItemInstanceHandler.handle({
+                data: {
+                    item_id: 1,
+                    instance_number: 1,
+                    studio_id: "studio_id",
+                    is_studio: true
+                }
+            });
+        });
+
+        it("Then returns the data of the requested instance + the data of the item", () => {
+            expect(response).toEqual({
+                instance_number: 1,
+                item_id: 1,
+                user_id: "Mr 2",
+                data: {
+                    object: "car",
+                    some: "thing"
+                }
+            });
+        });
+    });
+
+    describe("When called with an item with existing data that should be override", () => {
+        let response;
+
+        beforeEach(async () => {
+            itemRepository.getItem.mockReturnValue({
+                item_id: 1,
+                studio_id: "studio_id",
+                name: "laboris ut eu",
+                available_quantity: 10,
+                total_quantity: 10,
+                is_frozen: false,
+                data: {
+                    object: "car"
+                }
+            });
+
+            itemInstanceRepository.getInstance.mockReturnValue({
+                instance_number: 1,
+                item_id: 1,
+                user_id: "Mr 2",
+                data: {
+                    object: "spaceship",
+                    some: "thing"
+                }
+            });
+
+            response = await getItemInstanceHandler.handle({
+                data: {
+                    item_id: 1,
+                    instance_number: 1,
+                    studio_id: "studio_id",
+                    is_studio: true
+                }
+            });
+        });
+
+        it("Then returns the data of the requested instance over writing the item's data.", () => {
+            expect(response).toEqual({
+                instance_number: 1,
+                item_id: 1,
+                user_id: "Mr 2",
+                data: {
+                    object: "spaceship",
+                    some: "thing"
+                }
+            });
+        });
+    });
 });
