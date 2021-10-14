@@ -121,26 +121,36 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
             throw new Error("Invalid studio, you cannot update this item.");
         }
 
-        const itemInstance =
+        const updatedInstance =
             await this.itemInstanceRepository.updateItemInstance(
                 item_id,
                 instance_number,
                 data
             );
 
+        const aggregatedData = {
+            ...item.data,
+            ...updatedInstance.data
+        };
+
+        const aggregatedUpdatedInstance = new ItemInstance({
+            ...updatedInstance,
+            data: aggregatedData
+        });
+
         this.logger.info(
-            `item instance updated with [item_id: ${itemInstance.item_id}, instance_number: ${itemInstance.instance_number}]`
+            `item instance updated with [item_id: ${updatedInstance.item_id}, instance_number: ${updatedInstance.instance_number}]`
         );
 
         this.eventBus.publish(
             new ItemInstanceUpdatedEvent(
-                itemInstance.item_id,
-                itemInstance.instance_number,
-                itemInstance.data
+                updatedInstance.item_id,
+                updatedInstance.instance_number,
+                updatedInstance.data
             )
         );
 
-        return itemInstance;
+        return aggregatedUpdatedInstance;
     }
 }
 

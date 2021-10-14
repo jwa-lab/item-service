@@ -92,6 +92,16 @@ export class KnexItemRepository implements ItemRepository {
         };
     }
 
+    async getItemsByIds(ids: number[]): Promise<Item[]> {
+        const queryClient = await this.transactionManager.getProvider();
+
+        const results = await queryClient<Item>(this.itemTable)
+            .select()
+            .whereIn("item_id", ids);
+
+        return results;
+    }
+
     async assignItem(item: Item, decrease_quantity: number): Promise<Item> {
         const queryClient = await this.transactionManager.getProvider();
         const finalDecreaseQuantity = Math.abs(decrease_quantity);

@@ -20,4 +20,5 @@ export interface ItemRepository {
         studio_id: string
     ): Promise<GetItemsInterface>;
     assignItem(item: Item, decrease_quantity: number): Promise<Item>;
+    getItemsByIds(ids: number[]): Promise<Item[]>;
 }

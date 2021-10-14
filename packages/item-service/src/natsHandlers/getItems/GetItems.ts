@@ -9,8 +9,6 @@ import {
     Message,
     PrivateHandler
 } from "@jwalab/js-common";
-
-import { Item } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { GetItemsInterface } from "../../repositories/KnexItemRepository";
 import Joi from "joi";
@@ -47,7 +45,7 @@ export class GetItemsAirlockHandler extends AirlockHandler {
         super();
     }
 
-    async handle(msg: AirlockMessage): Promise<Item> {
+    async handle(msg: AirlockMessage): Promise<GetItemsInterface> {
         const query = msg.query as unknown as GetItemsQueryInterface;
         const parsedQuery = {
             start: Number(query?.start) || 0,
@@ -72,7 +70,7 @@ export class GetItemsAirlockHandler extends AirlockHandler {
             })
         );
 
-        return JSONCodec<Item>().decode(response.data);
+        return JSONCodec<GetItemsInterface>().decode(response.data);
     }
 }
 
