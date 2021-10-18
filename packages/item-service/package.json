@@ -12,13 +12,14 @@
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
         "test": "jest tests/",
         "start-db": "docker compose up -d",
+        "stop-db": "docker compose down",
         "deploy-warehouse": "node tezos/deploy.js",
         "migrate": "npx knex migrate:latest"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.15.6",
         "@babel/preset-typescript": "^7.15.0",
-        "@jwalab/tezos-work-queue": "*",
+        "@jwalab/tezos-gateway": "*",
         "@tsconfig/node14": "^1.0.1",
         "@types/jest": "^27.0.1",
         "@types/node": "^16.11.7",
@@ -35,9 +36,9 @@
     },
     "dependencies": {
         "@jwalab/errors": "0.0.2",
-        "@jwalab/event-bus": "0.0.1",
-        "@jwalab/logger": "0.0.1",
-        "@jwalab/nats-runner": "0.0.3",
+        "@jwalab/event-bus": "^0.0.1",
+        "@jwalab/logger": "^0.0.1",
+        "@jwalab/nats-runner": "^0.0.4",
         "@jwalab/tokenization-service-contracts": "^0.1.1",
         "@taquito/signer": "^10.1.2",
         "@taquito/taquito": "^10.1.2",
@@ -45,7 +46,7 @@
         "dotenv": "^10.0.0",
         "joi": "^17.4.2",
         "knex": "^0.95.11",
-        "nats": "^2.1.0",
+        "nats": "^2.4.0",
         "pg": "^8.7.1",
         "ts-node": "^10.4.0"
     }

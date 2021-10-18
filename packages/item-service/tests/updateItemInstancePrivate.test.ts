@@ -18,8 +18,7 @@ describe("Given UpdateItemInstance Handler", () => {
                 available_quantity: 10,
                 data: {},
                 frozen: false,
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_abcd"
+                tezos_operation_hash: "tezos_operation_hash_abcd"
             })
         };
 
@@ -32,8 +31,7 @@ describe("Given UpdateItemInstance Handler", () => {
                     level: "202",
                     type: "Armor"
                 },
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_efgh"
+                tezos_operation_hash: "tezos_operation_hash_efgh"
             })
         };
 
@@ -86,8 +84,7 @@ describe("Given UpdateItemInstance Handler", () => {
                     level: "202",
                     type: "Armor"
                 },
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_efgh"
+                tezos_operation_hash: "tezos_operation_hash_efgh"
             });
         });
 
@@ -115,8 +112,7 @@ describe("Given UpdateItemInstance Handler", () => {
                     some: "data"
                 },
                 frozen: false,
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_abcd"
+                tezos_operation_hash: "tezos_operation_hash_abcd"
             });
 
             itemInstanceRepository.updateItemInstance.mockReturnValue({
@@ -127,8 +123,7 @@ describe("Given UpdateItemInstance Handler", () => {
                     level: "202",
                     type: "Armor"
                 },
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_efgh"
+                tezos_operation_hash: "tezos_operation_hash_efgh"
             });
 
             response = await updateItemInstanceHandler.handle({
@@ -168,8 +163,7 @@ describe("Given UpdateItemInstance Handler", () => {
                     type: "Armor",
                     some: "data"
                 },
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_efgh"
+                tezos_operation_hash: "tezos_operation_hash_efgh"
             });
         });
 

@@ -89,6 +89,7 @@ export class KnexItemRepository implements ItemRepository {
         const results = await queryClient<Item>(this.itemTable)
             .select()
             .where("studio_id", studio_id)
+            .orderBy("item_id")
             .offset(start)
             .limit(limit);
 
@@ -109,7 +110,8 @@ export class KnexItemRepository implements ItemRepository {
 
         const results = await queryClient<SavedItem>(this.itemTable)
             .select()
-            .whereIn("item_id", ids);
+            .whereIn("item_id", ids)
+            .orderBy("item_id");
 
         return results;
     }

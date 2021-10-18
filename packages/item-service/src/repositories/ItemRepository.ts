@@ -2,8 +2,7 @@ import { Item, SavedItem } from "../entities/item";
 import { GetItemsInterface } from "./KnexItemRepository";
 
 export interface ItemTezosTokenizationInfo {
-    tezos_contract_address: string;
-    tezos_block: string;
+    tezos_operation_hash: string;
 }
 
 export interface ItemRepository {

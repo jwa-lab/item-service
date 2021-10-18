@@ -1,13 +1,21 @@
-import { consumerOpts, ConsumerOptsBuilder, createInbox } from "nats";
+import {
+    consumerOpts,
+    ConsumerOptsBuilder,
+    createInbox,
+    NatsConnection
+} from "nats";
 import { Logger } from "@jwalab/logger";
-import { JetStreamConsumer, JetStreamMessage } from "@jwalab/nats-runner";
-import { TezosWorkerTokenizationConfirmation } from "@jwalab/tezos-work-queue";
+import {
+    JetStreamPushConsumerHandler,
+    JetStreamMessage
+} from "@jwalab/nats-runner";
+import { TezosWorkerTokenizationConfirmation } from "@jwalab/tezos-gateway";
 
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TezosEvents } from "./TezosEvents";
 
-export class TezosConfirmationProcessor extends JetStreamConsumer {
+export class TezosConfirmationProcessor extends JetStreamPushConsumerHandler {
     readonly subject = "TEZOS.Processed.*";
 
     private readonly processingHandlers = new Map([
@@ -20,11 +28,12 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
     ]);
 
     constructor(
-        private readonly logger: Logger,
+        logger: Logger,
         private readonly itemRepository: ItemRepository,
-        private readonly itemInstanceRepository: ItemInstanceRepository
+        private readonly itemInstanceRepository: ItemInstanceRepository,
+        private readonly natsConnection: NatsConnection
     ) {
-        super();
+        super(logger, natsConnection.jetstream());
     }
 
     getConsumerOptions(): ConsumerOptsBuilder {
@@ -74,8 +83,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
     ): Promise<void> {
         if (typeof item_id !== "undefined") {
             this.itemRepository.updateItemTokenizationInfo(item_id, {
-                tezos_contract_address: message.operation.to,
-                tezos_block: message.operationConfirmation.block.hash
+                tezos_operation_hash: message.operationHash
             });
 
             this.logger.info(
@@ -90,8 +98,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
     ): Promise<void> {
         if (typeof item_id !== "undefined") {
             this.itemRepository.updateItemTokenizationInfo(item_id, {
-                tezos_contract_address: message.operation.to,
-                tezos_block: message.operationConfirmation.block.hash
+                tezos_operation_hash: message.operationHash
             });
 
             this.logger.info(
@@ -106,8 +113,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
     ): Promise<void> {
         if (typeof item_id !== "undefined") {
             this.itemRepository.updateItemTokenizationInfo(item_id, {
-                tezos_contract_address: message.operation.to,
-                tezos_block: message.operationConfirmation.block.hash
+                tezos_operation_hash: message.operationHash
             });
 
             this.logger.info(
@@ -131,8 +137,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
                 item_id,
                 instance_number,
                 {
-                    tezos_contract_address: message.operation.to,
-                    tezos_block: message.operationConfirmation.block.hash
+                    tezos_operation_hash: message.operationHash
                 }
             );
         }
@@ -157,8 +162,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
                 item_id,
                 instance_number,
                 {
-                    tezos_contract_address: message.operation.to,
-                    tezos_block: message.operationConfirmation.block.hash
+                    tezos_operation_hash: message.operationHash
                 }
             );
 
@@ -183,8 +187,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
                 item_id,
                 instance_number,
                 {
-                    tezos_contract_address: message.operation.to,
-                    tezos_block: message.operationConfirmation.block.hash
+                    tezos_operation_hash: message.operationHash
                 }
             );
 
