@@ -67,8 +67,8 @@ Start the `item-service`
 npm run dev -w @jwalab/item-service
 ```
 
-And start the `tezos-work-queue`
+And start the `tezos-gateway`
 
 ```
-npm run dev -w @jwalab/tezos-work-queue
+npm run dev -w @jwalab/tezos-gateway
 ```

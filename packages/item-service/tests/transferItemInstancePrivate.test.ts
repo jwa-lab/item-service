@@ -18,8 +18,7 @@ describe("Given TransferItemInstance Handler", () => {
                 available_quantity: 10,
                 data: {},
                 frozen: false,
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_abcd"
+                tezos_operation_hash: "tezos_operation_hash_abcd"
             })
         };
 
@@ -32,8 +31,7 @@ describe("Given TransferItemInstance Handler", () => {
                     level: "202",
                     type: "Armor"
                 },
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_efgh"
+                tezos_operation_hash: "tezos_operation_hash_efgh"
             })
         };
 
@@ -76,8 +74,7 @@ describe("Given TransferItemInstance Handler", () => {
                     level: "202",
                     type: "Armor"
                 },
-                tezos_contract_address: "some_contract_address",
-                tezos_block: "tezos_block_efgh"
+                tezos_operation_hash: "tezos_operation_hash_efgh"
             });
         });
 

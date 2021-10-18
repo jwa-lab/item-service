@@ -2,8 +2,7 @@ import { ItemInstance } from "../entities/itemInstance";
 import { GetItemInstancesInterface } from "./KnexItemInstanceRepository";
 
 export interface ItemInstanceTezosTokenizationInfo {
-    tezos_contract_address: string;
-    tezos_block: string;
+    tezos_operation_hash: string;
 }
 
 export interface ItemInstanceRepository {
