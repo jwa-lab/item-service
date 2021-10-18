@@ -1,5 +1,10 @@
-const { NATS_URL, LOGGING_FORMAT, TEZOS_RPC_URI, TEZOS_SECRET_KEY } =
-    process.env;
+const {
+    NATS_URL,
+    LOGGING_FORMAT,
+    TEZOS_RPC_URI,
+    TEZOS_SECRET_KEY,
+    MAX_BATCH_SIZE
+} = process.env;
 
 if (!NATS_URL) {
     throw new Error(
@@ -22,5 +27,6 @@ export default {
     NATS_URL,
     LOGGING_FORMAT,
     TEZOS_RPC_URI,
-    TEZOS_SECRET_KEY
+    TEZOS_SECRET_KEY,
+    MAX_BATCH_SIZE
 };

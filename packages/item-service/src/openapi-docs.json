@@ -512,11 +512,7 @@
                         "minimum": 0,
                         "example": 10
                     },
-                    "tezos_contract_address": {
-                        "type": "string",
-                        "example": "KT1KXtY25LjFj9VWS87tFzDheHEktvjQ9NbF"
-                    },
-                    "tezos_block": {
+                    "tezos_operation_hash": {
                         "type": "string",
                         "example": "BMNQQo4R18zYV8RLAwKau7QTKQh24fK7qLKjVbriVkXq4BBVjSL"
                     }
@@ -573,11 +569,7 @@
                             "type": "string"
                         }
                     },
-                    "tezos_contract_address": {
-                        "type": "string",
-                        "example": "KT1KXtY25LjFj9VWS87tFzDheHEktvjQ9NbF"
-                    },
-                    "tezos_block": {
+                    "tezos_operation_hash": {
                         "type": "string",
                         "example": "BMNQQo4R18zYV8RLAwKau7QTKQh24fK7qLKjVbriVkXq4BBVjSL"
                     }
@@ -594,8 +586,7 @@
                                 "user_id": "Mr 1",
                                 "instance_number": 3,
                                 "data": {},
-                                "tezos_block": "BMDdde8FcmEf8tGPvw5fQyC8iiQnggWgcBohBWWqibLt4J47sfL",
-                                "tezos_contract_address": "KT1BcDs8sydDppiTtRj6NgeZaHDgTs6h9Tuq"
+                                "tezos_operation_hash": "BMDdde8FcmEf8tGPvw5fQyC8iiQnggWgcBohBWWqibLt4J47sfL"
                             }
                         ]
                     },

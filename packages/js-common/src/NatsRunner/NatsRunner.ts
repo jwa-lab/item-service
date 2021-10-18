@@ -4,8 +4,7 @@ import {
     Subscription,
     JSONCodec,
     Codec,
-    JetStreamClient,
-    JetStreamSubscription
+    JetStreamClient
 } from "nats";
 import {
     ContainerBuilder,
@@ -13,7 +12,11 @@ import {
     Parameter
 } from "node-dependency-injection";
 import { Logger } from "../Logger/Logger";
-import { JetStreamConsumer } from "./Consumers";
+import {
+    JetStreamConsumer,
+    JetStreamPullConsumer,
+    JetStreamPushConsumer
+} from "./Consumers";
 
 import { AirlockHandler, PrivateHandler } from "./Handlers";
 import { AirlockMessage, JetStreamMessage, Message } from "./Messages";
@@ -252,23 +255,43 @@ export class NatsRunner {
 
         const consumerOptions = consumer.getConsumerOptions();
 
-        const subscription = await this.jetStreamClient.subscribe(
-            subject,
-            consumerOptions
-        );
+        if (consumer instanceof JetStreamPullConsumer) {
+            const subscription = await this.jetStreamClient.pullSubscribe(
+                subject,
+                consumerOptions
+            );
 
-        this.handleJetStreamMessage(subscription, consumer);
+            consumer.setSubscription(subscription);
+        } else if (consumer instanceof JetStreamPushConsumer) {
+            const subscription = await this.jetStreamClient.subscribe(
+                subject,
+                consumerOptions
+            );
+
+            consumer.setSubscription(subscription);
+        } else {
+            throw new Error(`Unsupported consumer type.`);
+        }
+
+        this.handleJetStreamMessage(consumer);
+
+        consumer.onReady();
     }
 
     async handleJetStreamMessage(
-        subscription: JetStreamSubscription,
-        consumer: JetStreamConsumer
+        consumer: JetStreamPullConsumer | JetStreamPushConsumer
     ): Promise<void> {
+        const subscription = consumer.getSubscription();
+
         for await (const message of subscription) {
             try {
                 await consumer.handle(new JetStreamMessage(message));
             } catch (err) {
-                this.logger.error((err as Error).message);
+                this.logger.error(
+                    `Error handling JetStream message with sequence id (${
+                        message.seq
+                    }). ${JSON.stringify(err)}. Message won't be redelivered`
+                );
 
                 // if the handler wants the message to be redelivered,
                 // it needs to catch the error itself and implement the necessary retries.

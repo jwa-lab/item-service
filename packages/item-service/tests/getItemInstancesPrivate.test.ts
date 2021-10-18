@@ -18,8 +18,7 @@ describe("Given GetItemInstances Handler", () => {
                         obj: "plane"
                     },
                     frozen: false,
-                    tezos_contract_address: "some_contract_address",
-                    tezos_block: "tezos_block_abcd"
+                    tezos_operation_hash: "tezos_operation_hash_abcd"
                 },
                 {
                     item_id: 2,
@@ -31,8 +30,7 @@ describe("Given GetItemInstances Handler", () => {
                         obj: "car"
                     },
                     frozen: false,
-                    tezos_contract_address: "some_contract_address",
-                    tezos_block: "tezos_block_abcd"
+                    tezos_operation_hash: "tezos_operation_hash_abcd"
                 }
             ])
         };
@@ -53,8 +51,7 @@ describe("Given GetItemInstances Handler", () => {
                             level: "202",
                             type: "Armor"
                         },
-                        tezos_contract_address: "some_contract_address",
-                        tezos_block: "tezos_block_efgh"
+                        tezos_operation_hash: "tezos_operation_hash_efgh"
                     },
                     {
                         instance_number: 1,
@@ -64,8 +61,7 @@ describe("Given GetItemInstances Handler", () => {
                             level: "202",
                             type: "Armor"
                         },
-                        tezos_contract_address: "some_contract_address",
-                        tezos_block: "tezos_block_efgh"
+                        tezos_operation_hash: "tezos_operation_hash_efgh"
                     }
                 ]
             })
@@ -116,8 +112,7 @@ describe("Given GetItemInstances Handler", () => {
                             type: "Armor",
                             obj: "plane"
                         },
-                        tezos_contract_address: "some_contract_address",
-                        tezos_block: "tezos_block_efgh"
+                        tezos_operation_hash: "tezos_operation_hash_efgh"
                     },
                     {
                         instance_number: 1,
@@ -128,8 +123,7 @@ describe("Given GetItemInstances Handler", () => {
                             type: "Armor",
                             obj: "car"
                         },
-                        tezos_contract_address: "some_contract_address",
-                        tezos_block: "tezos_block_efgh"
+                        tezos_operation_hash: "tezos_operation_hash_efgh"
                     }
                 ]
             });
@@ -155,8 +149,7 @@ describe("Given GetItemInstances Handler", () => {
                             level: "202",
                             type: "Armor"
                         },
-                        tezos_contract_address: "some_contract_address",
-                        tezos_block: "tezos_block_efgh"
+                        tezos_operation_hash: "tezos_operation_hash_efgh"
                     }
                 ]
             });
@@ -195,8 +188,7 @@ describe("Given GetItemInstances Handler", () => {
                             type: "Armor",
                             obj: "plane"
                         },
-                        tezos_contract_address: "some_contract_address",
-                        tezos_block: "tezos_block_efgh"
+                        tezos_operation_hash: "tezos_operation_hash_efgh"
                     }
                 ]
             });

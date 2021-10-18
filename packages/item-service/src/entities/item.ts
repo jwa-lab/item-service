@@ -5,8 +5,7 @@ export class Item {
     readonly total_quantity: number;
     readonly frozen: boolean;
     readonly data: Record<string, string>;
-    readonly tezos_block?: string;
-    readonly tezos_contract_address?: string;
+    readonly tezos_operation_hash?: string;
 
     constructor({
         studio_id,
@@ -15,8 +14,7 @@ export class Item {
         total_quantity,
         frozen,
         data,
-        tezos_block,
-        tezos_contract_address
+        tezos_operation_hash
     }: { [K in keyof Item]: Item[K] }) {
         this.studio_id = studio_id;
         this.name = name;
@@ -24,8 +22,7 @@ export class Item {
         this.total_quantity = total_quantity;
         this.frozen = frozen;
         this.data = data;
-        this.tezos_block = tezos_block;
-        this.tezos_contract_address = tezos_contract_address;
+        this.tezos_operation_hash = tezos_operation_hash;
     }
 }
 

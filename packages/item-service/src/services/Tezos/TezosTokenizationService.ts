@@ -176,12 +176,10 @@ export class TezosTokenizationService implements TokenizationService {
             ...operation
         };
 
-        this.logger.debug(
-            `TezosCommands.Execute ${JSON.stringify(tezosOperation)}`
-        );
+        this.logger.debug(`TEZOS.Execute ${JSON.stringify(tezosOperation)}`);
 
         await this.jetStreamClient.publish(
-            "TEZOS.Execute",
+            `TEZOS.Execute`,
             this.jsonCodec.encode(tezosOperation),
             { headers }
         );

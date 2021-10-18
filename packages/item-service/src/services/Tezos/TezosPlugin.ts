@@ -1,4 +1,4 @@
-import { AckPolicy, NatsConnection } from "nats";
+import { NatsConnection } from "nats";
 
 import { EventBus, Logger, RunnerPlugin } from "@jwalab/js-common";
 
@@ -36,13 +36,6 @@ export class TezosPlugin implements RunnerPlugin {
         jsm.streams.add({
             name: "TEZOS",
             subjects: ["TEZOS.Execute", "TEZOS.Processed.*"]
-        });
-
-        const stream = await jsm.streams.find("TEZOS.*");
-
-        await jsm.consumers.add(stream, {
-            durable_name: "tezos-service-worker",
-            ack_policy: AckPolicy.Explicit
         });
     }
 

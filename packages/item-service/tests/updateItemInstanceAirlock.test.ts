@@ -113,8 +113,7 @@ describe("Given UpdateItemInstance Airlock Handler", () => {
                         instance_number: 1,
                         user_id: "Mr 2",
                         data: {},
-                        tezos_contract_address: "tezos_contract_address",
-                        tezos_block: "tezos_block"
+                        tezos_operation_hash: "tezos_operation_hash"
                     })
                 })
             );
@@ -141,8 +140,7 @@ describe("Given UpdateItemInstance Airlock Handler", () => {
                 instance_number: 1,
                 user_id: "Mr 2",
                 data: {},
-                tezos_contract_address: "tezos_contract_address",
-                tezos_block: "tezos_block"
+                tezos_operation_hash: "tezos_operation_hash"
             });
         });
     });

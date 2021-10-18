@@ -6,8 +6,7 @@ export async function up(knex: Knex): Promise<void> {
         table.integer("item_id").notNullable();
         table.string("user_id").notNullable();
         table.jsonb("data").notNullable().defaultTo("{}");
-        table.string("tezos_contract_address");
-        table.string("tezos_block");
+        table.string("tezos_operation_hash");
         table.primary(["instance_number", "item_id"]);
     });
 }
