@@ -14,7 +14,9 @@ module.exports = {
                 "%config.SERVICE_NAME%",
                 "@logger",
                 "@itemRepository",
-                "@eventBus"
+                "@itemInstanceRepository",
+                "@eventBus",
+                "@transactionManager"
             ]
         }
     }

@@ -1,3 +1,4 @@
+import Joi from "joi";
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
 import {
     AIRLOCK_VERBS,
@@ -10,7 +11,7 @@ import {
     PrivateHandler
 } from "@jwalab/js-common";
 
-import { Item, itemSchema } from "../../entities/item";
+import { Item, SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemCreatedEvent } from "../../events/item";
 
@@ -32,19 +33,23 @@ export class CreateItemAirlockHandler extends AirlockHandler {
         super();
     }
 
-    async handle(msg: AirlockMessage): Promise<{ item_id: number }> {
-        await itemSchema.validateAsync(msg.body);
+    async handle(msg: AirlockMessage): Promise<SavedItem> {
+        const payload = msg.body as Pick<
+            Item,
+            "frozen" | "data" | "total_quantity" | "name"
+        >;
+
+        await itemCreateSchema.validateAsync(payload);
 
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");
         }
 
-        const itemProps = {
-            ...(msg.body as Partial<Item>),
-            studio_id: msg.headers.studio_id
-        };
-
-        const item = new Item(itemProps as Item);
+        const item = new Item({
+            ...payload,
+            available_quantity: payload.total_quantity,
+            studio_id: msg.headers.studio_id as string
+        });
 
         this.logger.info(`adding item ${JSON.stringify(item)}`);
 
@@ -53,7 +58,7 @@ export class CreateItemAirlockHandler extends AirlockHandler {
             JSONCodec().encode(item)
         );
 
-        return JSONCodec<{ item_id: number }>().decode(response.data);
+        return JSONCodec<SavedItem>().decode(response.data);
     }
 }
 
@@ -75,17 +80,22 @@ export class CreateItemHandler extends PrivateHandler {
         super();
     }
 
-    async handle(msg: Message): Promise<{ item_id: number }> {
-        const item_id = await this.itemRepository.addItem(
+    async handle(msg: Message): Promise<SavedItem> {
+        const item = await this.itemRepository.addItem(
             new Item(msg.data as Item)
         );
 
-        this.logger.info(`item added with id ${item_id}`);
+        this.logger.info(`item added with id ${item.item_id}`);
 
-        this.eventBus.publish(new ItemCreatedEvent(item_id));
+        this.eventBus.publish(new ItemCreatedEvent(item.item_id));
 
-        return {
-            item_id
-        };
+        return item;
     }
 }
+
+const itemCreateSchema = Joi.object({
+    name: Joi.string().max(100).required(),
+    total_quantity: Joi.number().min(1).required(),
+    frozen: Joi.boolean().required(),
+    data: Joi.object().pattern(/^/, Joi.string()).required()
+});

@@ -1,5 +1,4 @@
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
-
 import {
     AIRLOCK_VERBS,
     AirlockHandler,
@@ -9,6 +8,7 @@ import {
     Message,
     PrivateHandler
 } from "@jwalab/js-common";
+
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemInstance } from "../../entities/itemInstance";
 import { ItemRepository } from "../../repositories/ItemRepository";
@@ -108,21 +108,19 @@ export class GetItemInstanceHandler extends PrivateHandler {
             instance_number
         );
 
-        const aggregatedData = {
-            ...requiredItem.data,
-            ...fetchedInstance.data
-        };
-
-        const aggregatedInstance = new ItemInstance({
-            ...fetchedInstance,
-            data: aggregatedData
-        });
-
         if (!fetchedInstance) {
             throw new Error(
                 `No instance match for [item: ${item_id}, instance: ${instance_number}]`
             );
         }
+
+        const aggregatedInstance = new ItemInstance({
+            ...fetchedInstance,
+            data: {
+                ...requiredItem.data,
+                ...fetchedInstance.data
+            }
+        });
 
         return aggregatedInstance;
     }

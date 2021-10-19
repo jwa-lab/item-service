@@ -8,7 +8,11 @@ import { SQLUpdateNoRowsAffected } from "@jwalab/js-common";
 
 export interface GetItemInstancesInterface {
     results: ItemInstance[];
-    pagination: Record<string, unknown>;
+    pagination: {
+        from: number;
+        count: number;
+        total: number;
+    };
 }
 
 export class KnexItemInstanceRepository implements ItemInstanceRepository {
@@ -103,15 +107,47 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
         return result[0];
     }
 
-    async getItemInstances(
+    async getItemInstancesByUserId(
         start: number,
         limit: number,
-        studio_id: string,
         user_id?: string
     ): Promise<GetItemInstancesInterface> {
         const queryClient = await this.transactionManager.getProvider();
         const whereStatement = {
             ...(user_id && { user_id })
+        };
+
+        const totalQuery = await queryClient(this.itemInstanceTable)
+            .where(whereStatement)
+            .count("*")
+            .first();
+
+        const results = await queryClient<ItemInstance>(this.itemInstanceTable)
+            .select()
+            .where(whereStatement)
+            .offset(start)
+            .limit(limit);
+
+        const pagination = {
+            from: start,
+            count: results.length,
+            total: Number(totalQuery?.count)
+        };
+
+        return {
+            results,
+            pagination
+        };
+    }
+
+    async getItemInstancesByItemId(
+        start: number,
+        limit: number,
+        item_id: number
+    ): Promise<GetItemInstancesInterface> {
+        const queryClient = await this.transactionManager.getProvider();
+        const whereStatement = {
+            item_id
         };
 
         const totalQuery = await queryClient(this.itemInstanceTable)

@@ -24,7 +24,14 @@ describe("Given CreateItem  Handler", () => {
         let response;
 
         beforeEach(async () => {
-            itemRepository.addItem.mockReturnValue(1);
+            itemRepository.addItem.mockReturnValue({
+                item_id: 1,
+                name: "hello",
+                total_quantity: 10,
+                available_quantity: 10,
+                data: {},
+                frozen: false
+            });
 
             response = await createItemHandler.handle({
                 data: {
@@ -47,9 +54,14 @@ describe("Given CreateItem  Handler", () => {
             });
         });
 
-        it("Then returns the item_id of the newly created item", () => {
+        it("Then returns the newly created item", () => {
             expect(response).toEqual({
-                item_id: 1
+                item_id: 1,
+                name: "hello",
+                total_quantity: 10,
+                available_quantity: 10,
+                data: {},
+                frozen: false
             });
         });
 

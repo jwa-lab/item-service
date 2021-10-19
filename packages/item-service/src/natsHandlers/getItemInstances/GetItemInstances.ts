@@ -108,12 +108,12 @@ export class GetItemInstancesHandler extends PrivateHandler {
             throw new Error("MISSING_START_LIMIT");
         }
 
-        const instances = await this.itemInstanceRepository.getItemInstances(
-            start,
-            limit,
-            studio_id,
-            user_id
-        );
+        const instances =
+            await this.itemInstanceRepository.getItemInstancesByUserId(
+                start,
+                limit,
+                user_id
+            );
 
         const items_ids = new Set(
             instances.results.map((instance) => instance.item_id)

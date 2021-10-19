@@ -38,7 +38,7 @@ describe("Given GetItemInstances Handler", () => {
         };
 
         itemInstanceRepository = {
-            getItemInstances: jest.fn().mockReturnValue({
+            getItemInstancesByUserId: jest.fn().mockReturnValue({
                 pagination: {
                     from: 0,
                     count: 2,
@@ -95,8 +95,8 @@ describe("Given GetItemInstances Handler", () => {
 
         it("Then get the item instances from repository", () => {
             expect(
-                itemInstanceRepository.getItemInstances.mock.calls[0]
-            ).toEqual([0, 10, "studio_id", undefined]);
+                itemInstanceRepository.getItemInstancesByUserId.mock.calls[0]
+            ).toEqual([0, 10, undefined]);
         });
 
         it("Then returns the instances with the aggregated item's data'", () => {
@@ -140,7 +140,7 @@ describe("Given GetItemInstances Handler", () => {
         let response;
 
         beforeEach(async () => {
-            itemInstanceRepository.getItemInstances.mockReturnValue({
+            itemInstanceRepository.getItemInstancesByUserId.mockReturnValue({
                 pagination: {
                     from: 0,
                     count: 1,
@@ -174,8 +174,8 @@ describe("Given GetItemInstances Handler", () => {
 
         it("Then get the item instances from repository", () => {
             expect(
-                itemInstanceRepository.getItemInstances.mock.calls[0]
-            ).toEqual([0, 10, "studio_id", "Mr 2"]);
+                itemInstanceRepository.getItemInstancesByUserId.mock.calls[0]
+            ).toEqual([0, 10, "Mr 2"]);
         });
 
         it("Then returns the instances with the aggregated item's data", () => {

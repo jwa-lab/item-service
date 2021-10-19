@@ -1,5 +1,5 @@
 import { KnexTransactionManager } from "../services/knex/KnexTransactionManager";
-import { Item } from "../entities/item";
+import { Item, SavedItem } from "../entities/item";
 
 import { ItemRepository, ItemTezosTokenizationInfo } from "./ItemRepository";
 import { SQLUpdateNoRowsAffected } from "@jwalab/js-common";
@@ -14,20 +14,18 @@ export class KnexItemRepository implements ItemRepository {
 
     constructor(private transactionManager: KnexTransactionManager) {}
 
-    async addItem(item: Item): Promise<number> {
+    async addItem(item: Item): Promise<SavedItem> {
         const queryClient = await this.transactionManager.getProvider();
 
-        const result = await queryClient(this.itemTable).insert(item, [
-            "item_id"
-        ]);
+        const result = await queryClient(this.itemTable).insert(item, ["*"]);
 
-        return result[0].item_id;
+        return result[0];
     }
 
-    async updateItem(item: Item): Promise<Item> {
+    async updateItem(item: SavedItem): Promise<SavedItem> {
         const queryClient = await this.transactionManager.getProvider();
 
-        const existingItem = await this.getItem(item.item_id as number);
+        const existingItem = await this.getItem(item.item_id);
 
         if (existingItem.studio_id !== item.studio_id) {
             throw new Error("Invalid studio, you cannot update this item.");
@@ -37,7 +35,7 @@ export class KnexItemRepository implements ItemRepository {
             throw new Error("Cannot update this item. Item is frozen.");
         }
 
-        const result = await queryClient<Item>(this.itemTable)
+        const result = await queryClient<SavedItem>(this.itemTable)
             .update(item, Object.keys(item))
             .where("item_id", item.item_id);
 
@@ -55,14 +53,14 @@ export class KnexItemRepository implements ItemRepository {
             .where("item_id", item_id);
     }
 
-    async getItem(item_id: number): Promise<Item> {
+    async getItem(item_id: number): Promise<SavedItem> {
         const queryClient = await this.transactionManager.getProvider();
 
-        const result = await queryClient(this.itemTable)
+        const result = await queryClient<SavedItem>(this.itemTable)
             .select()
             .where("item_id", item_id);
 
-        return new Item(result[0]);
+        return result[0];
     }
 
     async getItems(
@@ -92,17 +90,20 @@ export class KnexItemRepository implements ItemRepository {
         };
     }
 
-    async getItemsByIds(ids: number[]): Promise<Item[]> {
+    async getItemsByIds(ids: number[]): Promise<SavedItem[]> {
         const queryClient = await this.transactionManager.getProvider();
 
-        const results = await queryClient<Item>(this.itemTable)
+        const results = await queryClient<SavedItem>(this.itemTable)
             .select()
             .whereIn("item_id", ids);
 
         return results;
     }
 
-    async assignItem(item: Item, decrease_quantity: number): Promise<Item> {
+    async assignItem(
+        item: SavedItem,
+        decrease_quantity: number
+    ): Promise<SavedItem> {
         const queryClient = await this.transactionManager.getProvider();
         const finalDecreaseQuantity = Math.abs(decrease_quantity);
 

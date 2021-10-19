@@ -27,10 +27,14 @@ export interface ItemInstanceRepository {
         instance_number: number,
         to_user_id: string
     ): Promise<ItemInstance>;
-    getItemInstances(
+    getItemInstancesByUserId(
         start: number,
         limit: number,
-        studio_id: string,
         user_id?: string
+    ): Promise<GetItemInstancesInterface>;
+    getItemInstancesByItemId(
+        start: number,
+        limit: number,
+        item_id: number
     ): Promise<GetItemInstancesInterface>;
 }
