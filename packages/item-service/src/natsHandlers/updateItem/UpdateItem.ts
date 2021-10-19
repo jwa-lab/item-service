@@ -11,11 +11,13 @@ import {
     PrivateHandler
 } from "@jwalab/js-common";
 
-import { Item } from "../../entities/item";
+import { Item, SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemUpdatedEvent } from "../../events/item";
+import { KnexTransactionManager } from "../../services/knex/KnexTransactionManager";
+import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 
-interface UpdateItemPrivatePayloadInterface extends Item {
+interface UpdateItemPrivatePayloadInterface extends SavedItem {
     is_studio: boolean;
     studio_id: string;
 }
@@ -38,29 +40,32 @@ export class UpdateItemAirlockHandler extends AirlockHandler {
         super();
     }
 
-    async handle(msg: AirlockMessage): Promise<{ item_id: number }> {
-        await itemUpdateSchema.validateAsync(msg.body);
+    async handle(msg: AirlockMessage): Promise<SavedItem> {
+        const updatedFields = msg.body as Pick<
+            SavedItem,
+            "item_id" | "frozen" | "data" | "total_quantity" | "name"
+        >;
+
+        await itemUpdateSchema.validateAsync(updatedFields);
 
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");
         }
 
-        const itemProps = {
-            ...(msg.body as Partial<Item>),
-            studio_id: msg.headers.studio_id,
+        const payload = {
+            ...updatedFields,
+            studio_id: msg.headers.studio_id as string,
             is_studio: msg.headers.is_studio
         };
 
-        const item = new Item(itemProps as Item);
-
-        this.logger.info(`updating item ${JSON.stringify(item)}`);
+        this.logger.info(`updating item ${JSON.stringify(payload)}`);
 
         const response = await this.natsConnection.request(
             `${this.SERVICE_NAME}.update-item`,
-            JSONCodec().encode(itemProps)
+            JSONCodec().encode(payload)
         );
 
-        return JSONCodec<{ item_id: number }>().decode(response.data);
+        return JSONCodec<SavedItem>().decode(response.data);
     }
 }
 
@@ -77,7 +82,9 @@ export class UpdateItemHandler extends PrivateHandler {
         private SERVICE_NAME: string,
         private logger: Logger,
         private itemRepository: ItemRepository,
-        private eventBus: EventBus
+        private itemInstanceRepository: ItemInstanceRepository,
+        private eventBus: EventBus,
+        private transactionManager: KnexTransactionManager
     ) {
         super();
     }
@@ -93,23 +100,45 @@ export class UpdateItemHandler extends PrivateHandler {
             throw new Error("STUDIO_ID_MISSING");
         }
 
-        const item = await this.itemRepository.updateItem(
-            new Item(msg.data as Item)
-        );
+        const transactionResult = await this.transactionManager.transaction<
+            Promise<SavedItem>
+        >(async () => {
+            const {
+                pagination: { total }
+            } = await this.itemInstanceRepository.getItemInstancesByItemId(
+                0,
+                1,
+                data.item_id
+            );
 
-        this.logger.info(`item updated with id ${item.item_id}`);
+            if (total > data.total_quantity) {
+                throw new Error(
+                    "Item's total_quantity can't be less than number of already assigned instances."
+                );
+            }
 
-        this.eventBus.publish(new ItemUpdatedEvent(item.item_id as number));
+            const item = await this.itemRepository.updateItem(
+                new SavedItem({
+                    ...data,
+                    available_quantity: data.total_quantity - total
+                })
+            );
 
-        return item;
+            this.logger.info(`item updated with id ${item.item_id}`);
+
+            return item;
+        });
+
+        this.eventBus.publish(new ItemUpdatedEvent(data.item_id));
+
+        return transactionResult;
     }
 }
 
-export const itemUpdateSchema = Joi.object({
-    item_id: Joi.number().min(0).required(),
+const itemUpdateSchema = Joi.object({
+    item_id: Joi.number().min(1).required(),
     name: Joi.string().max(100).required(),
-    available_quantity: Joi.number().min(0).required(),
-    total_quantity: Joi.number().min(0).required(),
+    total_quantity: Joi.number().min(1).required(),
     frozen: Joi.boolean().required(),
     data: Joi.object().pattern(/^/, Joi.string()).required()
 });

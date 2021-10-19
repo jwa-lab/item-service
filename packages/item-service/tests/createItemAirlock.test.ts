@@ -29,7 +29,6 @@ describe("Given CreateItem Airlock Handler", () => {
                     body: {
                         name: "test",
                         total_quantity: 10,
-                        available_quantity: 10,
                         data: {},
                         frozen: false
                     },
@@ -50,7 +49,6 @@ describe("Given CreateItem Airlock Handler", () => {
                 createItemAirlockHandler.handle({
                     body: {
                         total_quantity: 10,
-                        available_quantity: 10,
                         data: {},
                         frozen: false
                     },
@@ -75,34 +73,19 @@ describe("Given CreateItem Airlock Handler", () => {
             );
         });
 
-        it("Then throws an error when available_quantity is missing", () => {
+        it("Then throws an error when total_quantity is negative", () => {
             expect(
                 createItemAirlockHandler.handle({
                     body: {
                         name: "hello",
-                        total_quantity: 10,
-                        data: {},
-                        frozen: false
-                    },
-                    headers: DEFAULT_STUDIO_HEADERS
-                })
-            ).rejects.toThrow('"available_quantity" is required');
-        });
-
-        it("Then throws an error when available_quantity is negative", () => {
-            expect(
-                createItemAirlockHandler.handle({
-                    body: {
-                        name: "hello",
-                        total_quantity: 10,
-                        available_quantity: -1,
+                        total_quantity: -1,
                         data: {},
                         frozen: false
                     },
                     headers: DEFAULT_STUDIO_HEADERS
                 })
             ).rejects.toThrow(
-                '"available_quantity" must be greater than or equal to 0'
+                '"total_quantity" must be greater than or equal to 1'
             );
         });
 
@@ -112,7 +95,6 @@ describe("Given CreateItem Airlock Handler", () => {
                     body: {
                         name: "hello",
                         total_quantity: 10,
-                        available_quantity: 10,
                         data: {
                             test: true
                         },
@@ -131,7 +113,12 @@ describe("Given CreateItem Airlock Handler", () => {
             natsConnection.request.mockReturnValue(
                 Promise.resolve({
                     data: JSONCodec().encode({
-                        item_id: 1
+                        item_id: 1,
+                        name: "hello",
+                        total_quantity: 10,
+                        available_quantity: 10,
+                        data: {},
+                        frozen: false
                     })
                 })
             );
@@ -140,7 +127,6 @@ describe("Given CreateItem Airlock Handler", () => {
                 body: {
                     name: "hello",
                     total_quantity: 10,
-                    available_quantity: 10,
                     data: {},
                     frozen: false
                 },
@@ -156,7 +142,12 @@ describe("Given CreateItem Airlock Handler", () => {
 
         it("Then returns the item_id of the newly created item", () => {
             expect(response).toEqual({
-                item_id: 1
+                item_id: 1,
+                name: "hello",
+                total_quantity: 10,
+                available_quantity: 10,
+                data: {},
+                frozen: false
             });
         });
     });

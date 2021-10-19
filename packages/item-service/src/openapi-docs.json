@@ -38,11 +38,6 @@
                                         "type": "integer",
                                         "minimum": 0,
                                         "example": 10
-                                    },
-                                    "available_quantity": {
-                                        "type": "integer",
-                                        "minimum": 0,
-                                        "example": 10
                                     }
                                 }
                             }
@@ -56,12 +51,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "item_id": {
-                                            "type": "integer"
-                                        }
-                                    }
+                                    "$ref": "#/components/schemas/Item"
                                 }
                             }
                         }
@@ -80,7 +70,31 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Item"
+                                "type": "object",
+                                "properties": {
+                                    "frozen": {
+                                        "type": "boolean"
+                                    },
+                                    "item_id": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "example": 167
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "data": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "total_quantity": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 10
+                                    }
+                                }
                             }
                         }
                     },
@@ -135,12 +149,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "instance_id": {
-                                            "type": "integer"
-                                        }
-                                    }
+                                    "$ref": "#/components/schemas/Instance"
                                 }
                             }
                         }
@@ -463,6 +472,14 @@
                         "type": "integer",
                         "minimum": 0,
                         "example": 10
+                    },
+                    "tezos_contract_address": {
+                        "type": "string",
+                        "example": "KT1KXtY25LjFj9VWS87tFzDheHEktvjQ9NbF"
+                    },
+                    "tezos_block": {
+                        "type": "string",
+                        "example": "BMNQQo4R18zYV8RLAwKau7QTKQh24fK7qLKjVbriVkXq4BBVjSL"
                     }
                 }
             },
@@ -516,6 +533,14 @@
                         "additionalProperties": {
                             "type": "string"
                         }
+                    },
+                    "tezos_contract_address": {
+                        "type": "string",
+                        "example": "KT1KXtY25LjFj9VWS87tFzDheHEktvjQ9NbF"
+                    },
+                    "tezos_block": {
+                        "type": "string",
+                        "example": "BMNQQo4R18zYV8RLAwKau7QTKQh24fK7qLKjVbriVkXq4BBVjSL"
                     }
                 }
             },

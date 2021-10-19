@@ -1,4 +1,4 @@
-import { Item } from "../entities/item";
+import { Item, SavedItem } from "../entities/item";
 import { GetItemsInterface } from "./KnexItemRepository";
 
 export interface ItemTezosTokenizationInfo {
@@ -7,18 +7,18 @@ export interface ItemTezosTokenizationInfo {
 }
 
 export interface ItemRepository {
-    addItem(item: Item): Promise<number>;
-    updateItem(item: Item): Promise<Item>;
+    addItem(item: Item): Promise<SavedItem>;
+    updateItem(item: SavedItem): Promise<SavedItem>;
     updateItemTokenizationInfo(
         item_id: number,
         tezosTokenizationInfo: ItemTezosTokenizationInfo
     ): Promise<void>;
-    getItem(item_id: number): Promise<Item>;
+    getItem(item_id: number): Promise<SavedItem>;
     getItems(
         start: number,
         limit: number,
         studio_id: string
     ): Promise<GetItemsInterface>;
-    assignItem(item: Item, decrease_quantity: number): Promise<Item>;
-    getItemsByIds(ids: number[]): Promise<Item[]>;
+    assignItem(item: SavedItem, decrease_quantity: number): Promise<SavedItem>;
+    getItemsByIds(ids: number[]): Promise<SavedItem[]>;
 }
