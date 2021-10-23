@@ -1,6 +1,6 @@
 {
     "name": "@jwalab/js-common",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Common JS and TS tools for building microservices in the JWA Platform",
     "main": "./dist/index.js",
     "scripts": {
