@@ -13,6 +13,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
         [TezosEvents.ItemAdded, this.onItemAdded],
         [TezosEvents.ItemUpdated, this.onItemUpdated],
         [TezosEvents.ItemAssigned, this.onItemAssigned],
+        [TezosEvents.ItemFrozen, this.onItemFrozen],
         [TezosEvents.ItemInstanceUpdated, this.onItemInstanceUpdated],
         [TezosEvents.ItemInstanceTransferred, this.onItemInstanceTransferred]
     ]);
@@ -94,6 +95,22 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
 
             this.logger.info(
                 `Tezos tokenization confirmation stored for Updated Item ${item_id}`
+            );
+        }
+    }
+
+    async onItemFrozen(
+        message: TezosWorkerTokenizationConfirmation,
+        { item_id }: { item_id: number }
+    ): Promise<void> {
+        if (typeof item_id !== "undefined") {
+            this.itemRepository.updateItemTokenizationInfo(item_id, {
+                tezos_contract_address: message.operation.to,
+                tezos_block: message.operationConfirmation.block.hash
+            });
+
+            this.logger.info(
+                `Tezos tokenization confirmation stored for Frozen Item ${item_id}`
             );
         }
     }

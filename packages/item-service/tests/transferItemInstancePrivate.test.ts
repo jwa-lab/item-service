@@ -1,10 +1,7 @@
 import { TransferItemInstanceHandler } from "../src/natsHandlers/transferItemInstance/TransferItemInstance";
 import logger from "./utils/mockLogger";
 import eventBus from "./utils/mockEventBus";
-import {
-    ItemInstanceTransferredEvent,
-    ItemInstanceUpdatedEvent
-} from "../src/events/item";
+import { ItemInstanceTransferredEvent } from "../src/events/item";
 
 describe("Given TransferItemInstance Handler", () => {
     let transferItemInstanceHandler;

@@ -10,7 +10,7 @@ import {
     isStudio
 } from "@jwalab/js-common";
 
-import { Item } from "../../entities/item";
+import { SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 
 interface GetItemPrivatePayloadInterface {
@@ -37,7 +37,7 @@ export class GetItemAirlockHandler extends AirlockHandler {
         super();
     }
 
-    async handle(msg: AirlockMessage): Promise<Item> {
+    async handle(msg: AirlockMessage): Promise<SavedItem> {
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");
         }
@@ -55,7 +55,7 @@ export class GetItemAirlockHandler extends AirlockHandler {
             })
         );
 
-        return JSONCodec<Item>().decode(response.data);
+        return JSONCodec<SavedItem>().decode(response.data);
     }
 }
 
@@ -75,7 +75,7 @@ export class GetItemHandler extends PrivateHandler {
         super();
     }
 
-    async handle(msg: Message): Promise<Item> {
+    async handle(msg: Message): Promise<SavedItem> {
         const data = msg.data as GetItemPrivatePayloadInterface;
         const fetchedItem = await this.itemRepository.getItem(data.item_id);
 

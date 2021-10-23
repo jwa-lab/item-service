@@ -14,7 +14,6 @@ import {
 
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { TokenizationService } from "../tokenization/TokenizationService";
-import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 
 import { TezosEvents } from "./TezosEvents";
 
@@ -25,7 +24,6 @@ export class TezosTokenizationService implements TokenizationService {
     constructor(
         private readonly logger: Logger,
         private readonly itemRepository: ItemRepository,
-        private readonly itemInstanceRepository: ItemInstanceRepository,
         private readonly tezosWarehouseContract: Promise<WarehouseContract>,
         natsConnection: NatsConnection
     ) {
@@ -71,6 +69,21 @@ export class TezosTokenizationService implements TokenizationService {
         await this.executeOperation(
             item.studio_id,
             TezosEvents.ItemUpdated,
+            JSON.stringify({ item_id }),
+            operation
+        );
+    }
+
+    async freezeItem(item_id: number): Promise<void> {
+        const item = await this.itemRepository.getItem(item_id);
+
+        const operation = (await this.tezosWarehouseContract).methods
+            .freeze_item(item_id)
+            .toTransferParams();
+
+        await this.executeOperation(
+            item.studio_id,
+            TezosEvents.ItemFrozen,
             JSON.stringify({ item_id }),
             operation
         );

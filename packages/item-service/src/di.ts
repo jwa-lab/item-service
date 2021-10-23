@@ -7,6 +7,7 @@ module.exports = {
         { resource: "./natsHandlers/createItem/di" },
         { resource: "./natsHandlers/updateItem/di" },
         { resource: "./natsHandlers/assignItem/di" },
+        { resource: "./natsHandlers/freezeItem/di" },
         { resource: "./natsHandlers/getItem/di" },
         { resource: "./natsHandlers/getItems/di" },
         { resource: "./natsHandlers/updateItemInstance/di" },

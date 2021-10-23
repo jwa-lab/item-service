@@ -1,6 +1,7 @@
+import { KnexTransactionManager } from "../../src/services/knex/KnexTransactionManager";
+
 export default {
-    knex: jest.fn(),
     initialize: jest.fn(),
     getProvider: jest.fn(),
     transaction: jest.fn()
-};
+} as unknown as KnexTransactionManager;
