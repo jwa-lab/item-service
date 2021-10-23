@@ -2,7 +2,7 @@ import * as winston from "winston";
 import { WinstonLogger } from "./WinstonLogger";
 
 export function makeWinstonLogger(
-    loggingFormat: string,
+    loggingFormat: "cli" | "json" = "json",
     serviceName: string
 ): WinstonLogger {
     let transport;
