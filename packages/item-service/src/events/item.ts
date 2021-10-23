@@ -58,3 +58,11 @@ export class ItemInstanceTransferredEvent implements EventBusEvent {
         this.to_user_id = to_user_id;
     }
 }
+
+export class ItemFrozenEvent implements EventBusEvent {
+    name = "ItemFrozenEvent";
+
+    constructor(readonly item_id: number) {
+        this.item_id = item_id;
+    }
+}

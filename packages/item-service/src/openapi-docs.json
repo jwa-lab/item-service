@@ -195,6 +195,45 @@
                 }
             }
         },
+        "/item-service/freeze-item": {
+            "post": {
+                "tags": ["item-service"],
+                "summary": "Freeze an item.",
+                "operationId": "freezeItem",
+                "requestBody": {
+                    "description": "Freeze an item.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "item_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Item"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
         "/item-service/items": {
             "get": {
                 "tags": ["item-service"],

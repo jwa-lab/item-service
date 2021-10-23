@@ -109,7 +109,7 @@ export class AssignItemHandler extends PrivateHandler {
         const item = await this.itemRepository.getItem(data.item_id);
 
         if (item.studio_id !== data.studio_id) {
-            throw new Error("Invalid studio, you cannot update this item.");
+            throw new Error("Invalid studio, you cannot assign this item.");
         }
 
         if (item.available_quantity === 0) {
