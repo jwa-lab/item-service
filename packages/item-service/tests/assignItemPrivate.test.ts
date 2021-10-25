@@ -2,12 +2,12 @@ import { AssignItemHandler } from "../src/natsHandlers/assignItem/AssignItem";
 import { ItemAssignedEvent } from "../src/events/item";
 import logger from "./utils/mockLogger";
 import eventBus from "./utils/mockEventBus";
-import mockTransactionManager from "./utils/mockTransactionManager";
 
 describe("Given AssignItem Handler", () => {
     let assignItemHandler;
     let itemRepository;
     let itemInstancesRepository;
+    let mockTransactionManager;
 
     beforeEach(() => {
         itemInstancesRepository = {
@@ -26,7 +26,9 @@ describe("Given AssignItem Handler", () => {
                 name: "Awesome item",
                 total_quantity: 10,
                 available_quantity: 9,
-                data: {},
+                data: {
+                    some: "data"
+                },
                 frozen: false
             }),
             getItem: jest.fn().mockReturnValue({
@@ -35,17 +37,16 @@ describe("Given AssignItem Handler", () => {
                 name: "Awesome item",
                 total_quantity: 10,
                 available_quantity: 10,
-                data: {},
+                data: {
+                    some: "data"
+                },
                 frozen: false
             })
         };
 
-        mockTransactionManager.transaction = jest.fn().mockReturnValue({
-            item_id: 1,
-            user_id: "test_user_id",
-            instance_number: 1,
-            data: {}
-        });
+        mockTransactionManager = {
+            transaction: (fn) => fn()
+        };
 
         assignItemHandler = new AssignItemHandler(
             "test-service",
@@ -139,7 +140,9 @@ describe("Given AssignItem Handler", () => {
                 item_id: 1,
                 user_id: "test_user_id",
                 instance_number: 1,
-                data: {}
+                data: {
+                    some: "data"
+                }
             });
         });
     });
