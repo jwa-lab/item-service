@@ -83,6 +83,7 @@ describe("Given GetItems Airlock Handler", () => {
 
         beforeEach(async () => {
             response = await getItemsAirlockHandler.handle({
+                query: {},
                 headers: DEFAULT_STUDIO_HEADERS
             });
         });

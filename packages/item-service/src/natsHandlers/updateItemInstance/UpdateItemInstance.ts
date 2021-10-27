@@ -14,6 +14,7 @@ import { ItemInstance } from "../../entities/itemInstance";
 import { ItemInstanceUpdatedEvent } from "../../events/item";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemRepository } from "../../repositories/ItemRepository";
+import { joiPayloadValidator } from "../../utils";
 
 interface UpdateItemInstancePrivatePayloadInterface extends ItemInstance {
     is_studio: boolean;
@@ -157,5 +158,8 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
 export const itemUpdateSchema = Joi.object({
     item_id: Joi.number().min(0).required(),
     instance_number: Joi.number().min(0).required(),
-    data: Joi.object().pattern(/^/, Joi.string()).required()
+    data: Joi.object()
+        .pattern(/^/, Joi.string())
+        .required()
+        .custom(joiPayloadValidator)
 });

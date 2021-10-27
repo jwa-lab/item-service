@@ -1,11 +1,12 @@
 import { JSONCodec } from "nats";
-import { CreateItemAirlockHandler } from "../src/natsHandlers/createItem/CreateItem";
+import { UpdateItemInstanceAirlockHandler } from "../src/natsHandlers/updateItemInstance/UpdateItemInstance";
 import logger from "./utils/mockLogger";
 import { randomBytes } from "crypto";
 
-describe("Given CreateItem Airlock Handler", () => {
-    let createItemAirlockHandler;
+describe("Given UpdateItemInstance Airlock Handler", () => {
+    let updateItemAirlockHandler;
     let natsConnection;
+
     const DEFAULT_STUDIO_HEADERS = {
         studio_id: "studio_id",
         is_studio: true
@@ -16,7 +17,7 @@ describe("Given CreateItem Airlock Handler", () => {
             request: jest.fn()
         };
 
-        createItemAirlockHandler = new CreateItemAirlockHandler(
+        updateItemAirlockHandler = new UpdateItemInstanceAirlockHandler(
             "test-service",
             logger,
             natsConnection
@@ -26,12 +27,11 @@ describe("Given CreateItem Airlock Handler", () => {
     describe("When called with an invalid token type", () => {
         it("Then throws an error indicating a bad token", () => {
             expect(
-                createItemAirlockHandler.handle({
+                updateItemAirlockHandler.handle({
                     body: {
-                        name: "test",
-                        total_quantity: 10,
-                        data: {},
-                        frozen: false
+                        item_id: 1,
+                        instance_number: 1,
+                        data: {}
                     },
                     headers: {
                         studio_id: "studio_id",
@@ -45,61 +45,39 @@ describe("Given CreateItem Airlock Handler", () => {
     });
 
     describe("When called with an invalid message body", () => {
-        it("Then throws an error when name is missing", () => {
+        it("Then throws an error when item_id is missing", () => {
             expect(
-                createItemAirlockHandler.handle({
+                updateItemAirlockHandler.handle({
                     body: {
-                        total_quantity: 10,
-                        data: {},
-                        frozen: false
+                        instance_number: 1,
+                        data: {}
                     },
                     headers: DEFAULT_STUDIO_HEADERS
                 })
-            ).rejects.toThrow('"name" is required');
+            ).rejects.toThrow('"item_id" is required');
         });
 
-        it("Then throws an error when name is too long", () => {
+        it("Then throws an error when instance_number is missing", () => {
             expect(
-                createItemAirlockHandler.handle({
+                updateItemAirlockHandler.handle({
                     body: {
-                        name: new Array(101).fill("a").join(""),
-                        total_quantity: 10,
-                        data: {},
-                        frozen: false
+                        item_id: 1,
+                        data: {}
                     },
                     headers: DEFAULT_STUDIO_HEADERS
                 })
-            ).rejects.toThrow(
-                '"name" length must be less than or equal to 100 characters long'
-            );
-        });
-
-        it("Then throws an error when total_quantity is negative", () => {
-            expect(
-                createItemAirlockHandler.handle({
-                    body: {
-                        name: "hello",
-                        total_quantity: -1,
-                        data: {},
-                        frozen: false
-                    },
-                    headers: DEFAULT_STUDIO_HEADERS
-                })
-            ).rejects.toThrow(
-                '"total_quantity" must be greater than or equal to 1'
-            );
+            ).rejects.toThrow('"instance_number" is required');
         });
 
         it("Then throws an error when data values are not strings", () => {
             expect(
-                createItemAirlockHandler.handle({
+                updateItemAirlockHandler.handle({
                     body: {
-                        name: "hello",
-                        total_quantity: 10,
+                        item_id: 1,
+                        instance_number: 1,
                         data: {
                             test: true
-                        },
-                        frozen: false
+                        }
                     },
                     headers: DEFAULT_STUDIO_HEADERS
                 })
@@ -108,14 +86,13 @@ describe("Given CreateItem Airlock Handler", () => {
 
         it("Then throws an error when data is too big (10001 bytes or higher)", () => {
             expect(
-                createItemAirlockHandler.handle({
+                updateItemAirlockHandler.handle({
                     body: {
-                        name: "hello",
-                        total_quantity: 10,
+                        item_id: 1,
+                        instance_number: 1,
                         data: {
                             test: randomBytes(11000).toString("ascii")
-                        },
-                        frozen: false
+                        }
                     },
                     headers: DEFAULT_STUDIO_HEADERS
                 })
@@ -133,21 +110,20 @@ describe("Given CreateItem Airlock Handler", () => {
                 Promise.resolve({
                     data: JSONCodec().encode({
                         item_id: 1,
-                        name: "hello",
-                        total_quantity: 10,
-                        available_quantity: 10,
+                        instance_number: 1,
+                        user_id: "Mr 2",
                         data: {},
-                        frozen: false
+                        tezos_contract_address: "tezos_contract_address",
+                        tezos_block: "tezos_block"
                     })
                 })
             );
 
-            response = await createItemAirlockHandler.handle({
+            response = await updateItemAirlockHandler.handle({
                 body: {
-                    name: "hello",
-                    total_quantity: 10,
-                    data: {},
-                    frozen: false
+                    item_id: 1,
+                    instance_number: 1,
+                    data: {}
                 },
                 headers: DEFAULT_STUDIO_HEADERS
             });
@@ -155,18 +131,18 @@ describe("Given CreateItem Airlock Handler", () => {
 
         it("Then calls the private handler", () => {
             expect(natsConnection.request.mock.calls[0][0]).toBe(
-                "test-service.create-item"
+                "test-service.update-item-instance"
             );
         });
 
-        it("Then returns the item_id of the newly created item", () => {
+        it("Then returns the newly updated item instance", () => {
             expect(response).toEqual({
                 item_id: 1,
-                name: "hello",
-                total_quantity: 10,
-                available_quantity: 10,
+                instance_number: 1,
+                user_id: "Mr 2",
                 data: {},
-                frozen: false
+                tezos_contract_address: "tezos_contract_address",
+                tezos_block: "tezos_block"
             });
         });
     });

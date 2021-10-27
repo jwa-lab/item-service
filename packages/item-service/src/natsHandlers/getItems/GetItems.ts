@@ -14,7 +14,6 @@ import { GetItemsInterface } from "../../repositories/KnexItemRepository";
 import Joi from "joi";
 
 interface GetItemsPrivatePayloadInterface {
-    page: number;
     start: number;
     limit: number;
     is_studio: boolean;
@@ -22,7 +21,6 @@ interface GetItemsPrivatePayloadInterface {
 }
 
 interface GetItemsQueryInterface {
-    page: string;
     start: string;
     limit: string;
 }
@@ -46,11 +44,10 @@ export class GetItemsAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<GetItemsInterface> {
-        const query = msg.query as unknown as GetItemsQueryInterface;
+        const { start, limit } = msg.query as unknown as GetItemsQueryInterface;
         const parsedQuery = {
-            start: Number(query?.start) || 0,
-            limit:
-                typeof query?.limit !== "undefined" ? Number(query.limit) : 10
+            start: Number(start) || 0,
+            limit: typeof limit !== "undefined" ? Number(limit) : 10
         };
 
         await getItemsSchema.validateAsync(parsedQuery);
@@ -91,21 +88,18 @@ export class GetItemsHandler extends PrivateHandler {
     }
 
     async handle(msg: Message): Promise<GetItemsInterface> {
-        const data = msg.data as GetItemsPrivatePayloadInterface;
+        const { is_studio, studio_id, start, limit } =
+            msg.data as GetItemsPrivatePayloadInterface;
 
-        if (!data.is_studio) {
+        if (!is_studio) {
             throw new Error("INVALID_JWT_STUDIO");
         }
 
-        if (!data.studio_id) {
+        if (!studio_id) {
             throw new Error("STUDIO_ID_MISSING");
         }
 
-        return this.itemRepository.getItems(
-            data.start,
-            data.limit,
-            data.studio_id
-        );
+        return this.itemRepository.getItems(start, limit, studio_id);
     }
 }
 
