@@ -132,7 +132,18 @@ export class AssignItemHandler extends PrivateHandler {
                     assignedItem.available_quantity
             });
 
-            return this.itemInstanceRepository.createInstance(itemInstance);
+            const assignedInstance =
+                await this.itemInstanceRepository.createInstance(itemInstance);
+
+            const aggregatedInstance = new ItemInstance({
+                ...assignedInstance,
+                data: {
+                    ...assignedItem.data,
+                    ...assignedInstance.data
+                }
+            });
+
+            return aggregatedInstance;
         });
 
         this.eventBus.publish(
