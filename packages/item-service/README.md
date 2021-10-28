@@ -14,13 +14,13 @@ minilab start
 2. Start the PostgreSQL database
 
 ```
-docker compose up
+npm run start-db
 ```
 
 3. Initialize the DB schemas
 
 ```
-./run knex seed:run
+npm run migrate
 ```
 
 ## Use

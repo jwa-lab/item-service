@@ -11,9 +11,8 @@
         "start": "node ./dist/index.js",
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
         "test": "jest tests/",
-        "start-db": "docker compose up",
+        "start-db": "docker compose up -d",
         "deploy-warehouse": "node tezos/deploy.js",
-        "seed-db": "npx knex seed:run",
         "migrate": "npx knex migrate:latest"
     },
     "devDependencies": {
