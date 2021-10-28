@@ -1,12 +1,12 @@
 module.exports = {
     services: {
-        AssignItemAirlock: {
+        FreezeItemAirlock: {
             class: "./FreezeItem",
             main: "FreezeItemAirlockHandler",
             tags: [{ name: "nats.handler" }],
             arguments: ["%config.SERVICE_NAME%", "@logger", "@natsConnection"]
         },
-        AssignItem: {
+        FreezeItem: {
             class: "./FreezeItem",
             main: "FreezeItemHandler",
             tags: [{ name: "nats.handler" }],
