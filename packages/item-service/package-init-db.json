@@ -1,0 +1,15 @@
+{
+    "scripts": {
+        "migrate": "npx knex migrate:latest"
+    },
+    "devDependencies": {
+        "@tsconfig/node14": "^1.0.1",
+        "typescript": "^4.4"
+    },
+    "dependencies": {
+        "dotenv": "^10.0.0",
+        "knex": "^0.95.11",
+        "pg": "^8.7.1",
+        "ts-node": "^10.4.0"
+    }
+}
