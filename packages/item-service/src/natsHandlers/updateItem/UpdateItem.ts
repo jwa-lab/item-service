@@ -16,6 +16,7 @@ import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemUpdatedEvent } from "../../events/item";
 import { KnexTransactionManager } from "../../services/knex/KnexTransactionManager";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
+import { joiPayloadValidator } from "../../utils";
 
 interface UpdateItemPrivatePayloadInterface extends SavedItem {
     is_studio: boolean;
@@ -140,5 +141,8 @@ const itemUpdateSchema = Joi.object({
     name: Joi.string().max(100).required(),
     total_quantity: Joi.number().min(1).required(),
     frozen: Joi.boolean().required(),
-    data: Joi.object().pattern(/^/, Joi.string()).required()
+    data: Joi.object()
+        .pattern(/^/, Joi.string())
+        .required()
+        .custom(joiPayloadValidator)
 });

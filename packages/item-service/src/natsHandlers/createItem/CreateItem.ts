@@ -14,6 +14,7 @@ import {
 import { Item, SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemCreatedEvent } from "../../events/item";
+import { joiPayloadValidator } from "../../utils";
 
 export class CreateItemAirlockHandler extends AirlockHandler {
     readonly subject = "item";
@@ -97,5 +98,8 @@ const itemCreateSchema = Joi.object({
     name: Joi.string().max(100).required(),
     total_quantity: Joi.number().min(1).required(),
     frozen: Joi.boolean().required(),
-    data: Joi.object().pattern(/^/, Joi.string()).required()
+    data: Joi.object()
+        .pattern(/^/, Joi.string())
+        .required()
+        .custom(joiPayloadValidator)
 });

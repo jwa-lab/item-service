@@ -1,6 +1,7 @@
 import { JSONCodec } from "nats";
 import { UpdateItemAirlockHandler } from "../src/natsHandlers/updateItem/UpdateItem";
 import logger from "./utils/mockLogger";
+import { randomBytes } from "crypto";
 
 describe("Given UpdateItem Airlock Handler", () => {
     let updateItemAirlockHandler;
@@ -137,6 +138,25 @@ describe("Given UpdateItem Airlock Handler", () => {
                     headers: DEFAULT_STUDIO_HEADERS
                 })
             ).rejects.toThrow('"data.test" must be a string');
+        });
+
+        it("Then throws an error when data is too big (10001 bytes or higher)", () => {
+            expect(
+                updateItemAirlockHandler.handle({
+                    body: {
+                        item_id: 1,
+                        name: "hello",
+                        total_quantity: 10,
+                        data: {
+                            test: randomBytes(11000).toString("ascii")
+                        },
+                        frozen: false
+                    },
+                    headers: DEFAULT_STUDIO_HEADERS
+                })
+            ).rejects.toThrow(
+                "Maximum payload size exceeded, got 11004 bytes but maximum is 10000 bytes."
+            );
         });
     });
 

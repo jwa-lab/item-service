@@ -1,6 +1,6 @@
 {
     "name": "@jwalab/item-service",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Store and Retrieve Items and Item instances",
     "main": "dist/index.js",
     "scripts": {
