@@ -11,9 +11,9 @@
         "start": "node ./dist/index.js",
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
         "test": "jest tests/",
-        "start-db": "docker compose up",
+        "start-db": "docker compose up -d",
         "deploy-warehouse": "node tezos/deploy.js",
-        "seed-db": "npx knex seed:run"
+        "migrate": "npx knex migrate:latest"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.15.6",
@@ -38,9 +38,11 @@
         "@taquito/signer": "^10.1.2",
         "@taquito/taquito": "^10.1.2",
         "@taquito/utils": "^10.1.0",
+        "dotenv": "^10.0.0",
         "joi": "^17.4.2",
         "knex": "^0.95.11",
         "nats": "^2.1.0",
-        "pg": "^8.7.1"
+        "pg": "^8.7.1",
+        "ts-node": "^10.4.0"
     }
 }

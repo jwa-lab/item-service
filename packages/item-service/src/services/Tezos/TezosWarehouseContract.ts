@@ -14,12 +14,12 @@ export async function loadTezosWarehouseContract(
             );
 
         logger.debug(
-            `Successfully loaded Warehouse contract at ${WAREHOUSE_CONTRACT_ADDRESS}`
+            `Successfully loaded Warehouse contract at "${WAREHOUSE_CONTRACT_ADDRESS}"`
         );
         return warehouseContract;
     } catch (err) {
         logger.error(
-            `Unable to load Warehouse contract at ${WAREHOUSE_CONTRACT_ADDRESS}`
+            `Unable to load Warehouse contract at "${WAREHOUSE_CONTRACT_ADDRESS}"`
         );
         throw err;
     }

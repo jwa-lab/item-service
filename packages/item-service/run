@@ -11,22 +11,30 @@ declare name=$(node -p -e "require('./package.json').name.substring(1)")
 
 function docker-build() {
     docker build -t ${name} .
+    docker build -t ${name}-init-db -f init-db.Dockerfile .
+    docker build -t ${name}-init-tezos -f init-tezos.Dockerfile .
 }
 
 function docker-tag() {
     for tag in ${tags[@]}
     do
         docker tag ${name} ${name}:${tag}
+        docker tag ${name}-init-db ${name}-init-db:${tag}
+        docker tag ${name}-init-tezos ${name}-init-tezos:${tag}
     done
 }
 
 function docker-push() {
     docker push ${name}
+    docker push ${name}-init-db
+    docker push ${name}-init-tezos
+
     for tag in ${tags[@]}
     do
         docker push ${name}:${tag}
+        docker push ${name}-init-db:${tag}
+        docker push ${name}-init-tezos:${tag}
     done
 }
-
 
 "$@"

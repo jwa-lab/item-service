@@ -56,7 +56,7 @@ npm run start-db -w @jwalab/item-service
 Seed the DB:
 
 ```
-npm run seed-db -w @jwalab/item-service
+npm run migrate -w @jwalab/item-service
 ```
 
 Deploy the Warehouse contract:

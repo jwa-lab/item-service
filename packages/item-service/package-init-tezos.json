@@ -1,0 +1,11 @@
+{
+    "scripts": {
+        "deploy-warehouse": "node tezos/deploy.js"
+    },
+    "dependencies": {
+        "@jwalab/tokenization-service-contracts": "^0.1.1",
+        "@taquito/signer": "^10.1.2",
+        "@taquito/taquito": "^10.1.2",
+        "dotenv": "^10.0.0"
+    }
+}
