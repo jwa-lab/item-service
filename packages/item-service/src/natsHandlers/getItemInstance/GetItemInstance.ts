@@ -12,6 +12,7 @@ import {
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemInstance } from "../../entities/itemInstance";
 import { ItemRepository } from "../../repositories/ItemRepository";
+import Joi from "joi";
 
 interface GetItemInstancePrivatePayloadInterface {
     item_id: number;
@@ -45,6 +46,8 @@ export class GetItemInstanceAirlockHandler extends AirlockHandler {
 
         const item_id = Number(msg.subject.split(".")[2]);
         const instance_number = Number(msg.subject.split(".")[3]);
+
+        await getItemInstanceSchema.validateAsync({ item_id, instance_number });
 
         this.logger.info(
             `Getting item instance [item: ${item_id}, instance: ${instance_number}]`
@@ -99,6 +102,10 @@ export class GetItemInstanceHandler extends PrivateHandler {
 
         const requiredItem = await this.itemRepository.getItem(item_id);
 
+        if (!requiredItem) {
+            throw new Error(`Item with id ${item_id} does not exist.`);
+        }
+
         if (requiredItem.studio_id !== studio_id) {
             throw new Error("INVALID_STUDIO_ID");
         }
@@ -125,3 +132,8 @@ export class GetItemInstanceHandler extends PrivateHandler {
         return aggregatedInstance;
     }
 }
+
+const getItemInstanceSchema = Joi.object({
+    item_id: Joi.number().min(0).required(),
+    instance_number: Joi.number().min(0).required()
+});

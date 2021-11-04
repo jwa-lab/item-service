@@ -33,9 +33,9 @@ export class KnexTransactionManager {
             callbackResult = await callback();
             await transaction.commit();
         } catch (error) {
-            console.error(error);
+            console.error(`An error occurred in the SQL transaction: ${error}`);
             await transaction.rollback();
-            throw new Error(`Transaction error: ${error}`);
+            throw new Error((error as Error).message);
         }
 
         return callbackResult;
