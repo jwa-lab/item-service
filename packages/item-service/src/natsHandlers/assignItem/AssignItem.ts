@@ -108,6 +108,10 @@ export class AssignItemHandler extends PrivateHandler {
 
         const item = await this.itemRepository.getItem(data.item_id);
 
+        if (!item) {
+            throw new Error(`Item with id ${data.item_id} does not exist.`);
+        }
+
         if (item.studio_id !== data.studio_id) {
             throw new Error("Invalid studio, you cannot assign this item.");
         }

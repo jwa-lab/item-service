@@ -118,6 +118,10 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
 
         const item = await this.itemRepository.getItem(item_id);
 
+        if (!item) {
+            throw new Error(`Item with id ${item_id} does not exist.`);
+        }
+
         if (item.studio_id !== studio_id) {
             throw new Error("Invalid studio, you cannot update this item.");
         }

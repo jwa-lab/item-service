@@ -77,7 +77,7 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
 
         if (result.length === 0) {
             throw new SQLUpdateNoRowsAffected(
-                "No lines updated, maybe no instance for this record key ?"
+                "Unable to update the item instance, please check the given instance_number."
             );
         }
 
@@ -100,7 +100,7 @@ export class KnexItemInstanceRepository implements ItemInstanceRepository {
 
         if (result.length === 0) {
             throw new SQLUpdateNoRowsAffected(
-                "No lines updated, please verify your input or retry your request."
+                "Unable to transfer the item instance, please check your inputs or retry the request."
             );
         }
 

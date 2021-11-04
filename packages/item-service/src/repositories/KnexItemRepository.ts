@@ -27,6 +27,10 @@ export class KnexItemRepository implements ItemRepository {
 
         const existingItem = await this.getItem(item.item_id);
 
+        if (!existingItem) {
+            throw new Error(`Item with id ${item.item_id} does not exist.`);
+        }
+
         if (existingItem.studio_id !== item.studio_id) {
             throw new Error("Invalid studio, you cannot update this item.");
         }

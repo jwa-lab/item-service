@@ -4,14 +4,15 @@ import {
     AIRLOCK_VERBS,
     AirlockHandler,
     AirlockMessage,
+    isStudio,
     Logger,
     Message,
-    PrivateHandler,
-    isStudio
+    PrivateHandler
 } from "@jwalab/js-common";
 
 import { SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
+import Joi from "joi";
 
 interface GetItemPrivatePayloadInterface {
     item_id: number;
@@ -43,6 +44,8 @@ export class GetItemAirlockHandler extends AirlockHandler {
         }
 
         const item_id = Number(msg.subject.split(".")[2]);
+
+        await getItemSchema.validateAsync({ item_id });
 
         this.logger.info(`Getting item ${item_id}`);
 
@@ -79,6 +82,10 @@ export class GetItemHandler extends PrivateHandler {
         const data = msg.data as GetItemPrivatePayloadInterface;
         const fetchedItem = await this.itemRepository.getItem(data.item_id);
 
+        if (!fetchedItem) {
+            throw new Error(`Item with id ${data.item_id} does not exist.`);
+        }
+
         if (!data?.is_studio) {
             throw new Error("INVALID_JWT_STUDIO");
         } else {
@@ -90,3 +97,7 @@ export class GetItemHandler extends PrivateHandler {
         return fetchedItem;
     }
 }
+
+const getItemSchema = Joi.object({
+    item_id: Joi.number().min(0).required()
+});
