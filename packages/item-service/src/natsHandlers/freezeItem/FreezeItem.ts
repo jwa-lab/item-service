@@ -1,19 +1,21 @@
 import {
+    AIRLOCK_VERBS,
     AirlockHandler,
     AirlockMessage,
-    AIRLOCK_VERBS,
     EventBus,
     isStudio,
     Logger,
     Message,
     PrivateHandler
 } from "@jwalab/js-common";
+import Joi from "joi";
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
 
 import { SavedItem } from "../../entities/item";
 import { ItemFrozenEvent } from "../../events/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { KnexTransactionManager } from "../../services/knex/KnexTransactionManager";
+import { SchemaValidationError } from "../../errors";
 
 export class FreezeItemAirlockHandler extends AirlockHandler {
     readonly subject = "freeze-item";
@@ -34,6 +36,15 @@ export class FreezeItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<SavedItem> {
+        try {
+            await itemFreezeSchema.validateAsync(msg.body);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `FreezeItem -- ${(error as Error).message}`,
+                error as Error
+            );
+        }
+
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");
         }
@@ -131,3 +142,7 @@ export class FreezeItemHandler extends PrivateHandler {
         return item;
     }
 }
+
+export const itemFreezeSchema = Joi.object({
+    item_id: Joi.number().min(0).required()
+});

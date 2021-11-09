@@ -17,6 +17,7 @@ import { JetStreamConsumer } from "./Consumers";
 
 import { AirlockHandler, PrivateHandler } from "./Handlers";
 import { AirlockMessage, JetStreamMessage, Message } from "./Messages";
+import { JWAError } from "../errors";
 
 export * from "./Messages";
 export * from "./Handlers";
@@ -218,7 +219,10 @@ export class NatsRunner {
                 this.logger.error((err as Error).message);
                 message.respond(
                     this.jsonCodec.encode({
-                        error: (err as Error).message
+                        error:
+                            err instanceof JWAError
+                                ? JSON.stringify({ ...err, origin: undefined })
+                                : (err as Error).message
                     })
                 );
             }
@@ -238,7 +242,10 @@ export class NatsRunner {
                 this.logger.error((err as Error).message);
                 message.respond(
                     this.jsonCodec.encode({
-                        error: (err as Error).message
+                        error:
+                            err instanceof JWAError
+                                ? JSON.stringify({ ...err, origin: undefined })
+                                : (err as Error).message
                     })
                 );
             }

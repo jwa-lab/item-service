@@ -2,7 +2,7 @@ import { KnexTransactionManager } from "../services/knex/KnexTransactionManager"
 import { Item, SavedItem } from "../entities/item";
 
 import { ItemRepository, ItemTezosTokenizationInfo } from "./ItemRepository";
-import { SQLUpdateNoRowsAffected } from "@jwalab/js-common";
+import { SQLUpdateNoRowsAffected } from "../errors";
 
 export interface GetItemsInterface {
     results: Item[];

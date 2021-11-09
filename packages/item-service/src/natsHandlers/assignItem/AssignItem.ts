@@ -17,6 +17,7 @@ import { KnexTransactionManager } from "../../services/knex/KnexTransactionManag
 import { ItemInstance } from "../../entities/itemInstance";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemAssignedEvent } from "../../events/item";
+import { SchemaValidationError } from "../../errors";
 
 interface AssignItemPrivatePayloadInterface extends Item {
     is_studio: boolean;
@@ -44,7 +45,14 @@ export class AssignItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<ItemInstance> {
-        await itemAssignSchema.validateAsync(msg.body);
+        try {
+            await itemAssignSchema.validateAsync(msg.body);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `AssignItem -- ${(error as Error).message}`,
+                error as Error
+            );
+        }
 
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");

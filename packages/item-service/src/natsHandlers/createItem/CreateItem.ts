@@ -14,6 +14,7 @@ import {
 import { Item, SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemCreatedEvent } from "../../events/item";
+import { SchemaValidationError } from "../../errors";
 import { joiPayloadValidator } from "../../utils";
 
 export class CreateItemAirlockHandler extends AirlockHandler {
@@ -40,7 +41,14 @@ export class CreateItemAirlockHandler extends AirlockHandler {
             "frozen" | "data" | "total_quantity" | "name"
         >;
 
-        await itemCreateSchema.validateAsync(payload);
+        try {
+            await itemCreateSchema.validateAsync(payload);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `CreateItem -- ${(error as Error).message}`,
+                error as Error
+            );
+        }
 
         if (!isStudio(msg.headers)) {
             throw new Error("Invalid token type, a studio token is required.");

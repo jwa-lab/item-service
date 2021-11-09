@@ -4,7 +4,7 @@ import {
     ItemInstanceTezosTokenizationInfo
 } from "./ItemInstanceRepository";
 import { KnexTransactionManager } from "../services/knex/KnexTransactionManager";
-import { SQLUpdateNoRowsAffected } from "@jwalab/js-common";
+import { SQLUpdateNoRowsAffected } from "../errors";
 
 export interface GetItemInstancesInterface {
     results: ItemInstance[];
