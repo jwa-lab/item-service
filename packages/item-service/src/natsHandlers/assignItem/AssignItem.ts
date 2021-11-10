@@ -17,7 +17,14 @@ import { KnexTransactionManager } from "../../services/knex/KnexTransactionManag
 import { ItemInstance } from "../../entities/itemInstance";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemAssignedEvent } from "../../events/item";
-import { SchemaValidationError } from "../../errors";
+import {
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    OutOfStockError,
+    SchemaValidationError,
+    UnknownItemError
+} from "../../errors";
 
 interface AssignItemPrivatePayloadInterface extends Item {
     is_studio: boolean;
@@ -45,6 +52,10 @@ export class AssignItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<ItemInstance> {
+        if (!isStudio(msg.headers)) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
         try {
             await itemAssignSchema.validateAsync(msg.body);
         } catch (error) {
@@ -52,10 +63,6 @@ export class AssignItemAirlockHandler extends AirlockHandler {
                 `AssignItem -- ${(error as Error).message}`,
                 error as Error
             );
-        }
-
-        if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
         }
 
         const itemProps = {
@@ -99,35 +106,35 @@ export class AssignItemHandler extends PrivateHandler {
         const data = msg.data as AssignItemPrivatePayloadInterface;
 
         if (!data.is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!data.studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
         }
 
         if (!data.user_id) {
-            throw new Error("USER_ID_MISSING");
+            throw new MissingPropertyError("Property 'user_id' is missing.");
         }
 
         if (!data.item_id) {
-            throw new Error("MISSING_ITEM_ID");
+            throw new MissingPropertyError("Property 'item_id' is missing.");
         }
 
         const item = await this.itemRepository.getItem(data.item_id);
 
         if (!item) {
-            throw new Error(`Item with id ${data.item_id} does not exist.`);
+            throw new UnknownItemError(`Item ID: ${data.item_id}.`);
         }
 
         if (item.studio_id !== data.studio_id) {
-            throw new Error("Invalid studio, you cannot assign this item.");
+            throw new InvalidStudioError(
+                `Item with id ${data.item_id} does not belong to your studio.`
+            );
         }
 
         if (item.available_quantity === 0) {
-            throw new Error(
-                "This item is not assignable anymore. Item out of stock."
-            );
+            throw new OutOfStockError(`Item ID: ${data.item_id}.`);
         }
 
         const transactionResult = await this.transactionManager.transaction<

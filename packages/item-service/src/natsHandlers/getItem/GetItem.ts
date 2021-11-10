@@ -13,6 +13,13 @@ import {
 import { SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import Joi from "joi";
+import {
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    SchemaValidationError,
+    UnknownItemError
+} from "../../errors";
 
 interface GetItemPrivatePayloadInterface {
     item_id: number;
@@ -40,12 +47,19 @@ export class GetItemAirlockHandler extends AirlockHandler {
 
     async handle(msg: AirlockMessage): Promise<SavedItem> {
         if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         const item_id = Number(msg.subject.split(".")[2]);
 
-        await getItemSchema.validateAsync({ item_id });
+        try {
+            await getItemSchema.validateAsync({ item_id });
+        } catch (error) {
+            throw new SchemaValidationError(
+                `GetItem -- ${(error as Error).message}`,
+                error as Error
+            );
+        }
 
         this.logger.info(`Getting item ${item_id}`);
 
@@ -79,18 +93,25 @@ export class GetItemHandler extends PrivateHandler {
     }
 
     async handle(msg: Message): Promise<SavedItem> {
-        const data = msg.data as GetItemPrivatePayloadInterface;
-        const fetchedItem = await this.itemRepository.getItem(data.item_id);
+        const { is_studio, studio_id, item_id } =
+            msg.data as GetItemPrivatePayloadInterface;
+        const fetchedItem = await this.itemRepository.getItem(item_id);
 
         if (!fetchedItem) {
-            throw new Error(`Item with id ${data.item_id} does not exist.`);
+            throw new UnknownItemError(`Item ID: ${item_id}.`);
         }
 
-        if (!data?.is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+        if (!studio_id) {
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
+        }
+
+        if (!is_studio) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
         } else {
-            if (fetchedItem.studio_id !== data.studio_id) {
-                throw new Error("INVALID_STUDIO_ID");
+            if (fetchedItem.studio_id !== studio_id) {
+                throw new InvalidStudioError(
+                    `Unable to fetch item with id ${item_id}. Item does not belong to your studio.`
+                );
             }
         }
 

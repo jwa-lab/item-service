@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { ExceededPayloadSizeError } from "../errors";
 
 function objectSize(data: Record<string, string>) {
     return Object.keys(data).reduce(
@@ -14,8 +15,8 @@ function validatePayloadSize(data: Record<string, string>): boolean {
     const byteLength = objectSize(data);
 
     if (byteLength > 10000) {
-        throw new Error(
-            `Maximum payload size exceeded, got ${byteLength} bytes but maximum is 10000 bytes.`
+        throw new ExceededPayloadSizeError(
+            `Got ${byteLength} bytes but maximum is 10000 bytes.`
         );
     }
 

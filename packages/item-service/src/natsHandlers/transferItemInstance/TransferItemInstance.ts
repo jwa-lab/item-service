@@ -14,6 +14,13 @@ import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepositor
 import { ItemInstance } from "../../entities/itemInstance";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemInstanceTransferredEvent } from "../../events/item";
+import {
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    SchemaValidationError,
+    UnknownItemError
+} from "../../errors";
 
 interface TransferItemInstancePayload {
     item_id: number;
@@ -46,10 +53,17 @@ export class TransferItemInstanceAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<ItemInstance> {
-        await itemUpdateSchema.validateAsync(msg.body);
-
         if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
+        try {
+            await itemUpdateSchema.validateAsync(msg.body);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `TransferItemInstance -- ${(error as Error).message}`,
+                error as Error
+            );
         }
 
         const transferProps = {
@@ -95,33 +109,37 @@ export class TransferItemInstanceHandler extends PrivateHandler {
             msg.data as TransferItemInstancePrivatePayloadInterface;
 
         if (!is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
         }
 
         if (!item_id) {
-            throw new Error("ITEM_ID_MISSING");
+            throw new MissingPropertyError("Property 'item_id' is missing.");
         }
 
         if (!instance_number) {
-            throw new Error("INSTANCE_NUMBER_MISSING");
+            throw new MissingPropertyError(
+                "Property 'instance_number' is missing."
+            );
         }
 
         if (!to_user_id) {
-            throw new Error("TO_USER_ID_MISSING");
+            throw new MissingPropertyError("Property 'to_user_id' is missing.");
         }
 
         const item = await this.itemRepository.getItem(item_id);
 
         if (!item) {
-            throw new Error(`Item with id ${item_id} does not exist.`);
+            throw new UnknownItemError(`Item ID: ${item_id}.`);
         }
 
         if (item.studio_id !== studio_id) {
-            throw new Error("Invalid studio, you cannot update this item.");
+            throw new InvalidStudioError(
+                `Item with id ${item_id} does not belong to your studio.`
+            );
         }
 
         /*

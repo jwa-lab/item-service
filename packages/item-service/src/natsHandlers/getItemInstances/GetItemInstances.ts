@@ -14,6 +14,12 @@ import Joi from "joi";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemInstance } from "../../entities/itemInstance";
+import {
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    PropertyTypeError,
+    SchemaValidationError
+} from "../../errors";
 
 interface GetItemInstancesQueryInterface {
     start: number;
@@ -46,6 +52,10 @@ export class GetItemInstancesAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<GetItemInstancesInterface> {
+        if (!isStudio(msg.headers)) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
         const { start, limit, user_id } =
             msg.query as unknown as GetItemInstancesQueryInterface;
         const parsedQuery = {
@@ -54,10 +64,13 @@ export class GetItemInstancesAirlockHandler extends AirlockHandler {
             user_id: user_id
         };
 
-        await getItemsSchema.validateAsync(parsedQuery);
-
-        if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+        try {
+            await getItemsSchema.validateAsync(parsedQuery);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `GetItemInstances -- ${(error as Error).message}`,
+                error as Error
+            );
         }
 
         this.logger.info(`Getting items ${msg.headers.studio_id}`);
@@ -97,15 +110,31 @@ export class GetItemInstancesHandler extends PrivateHandler {
             msg.data as GetItemInstancesPrivatePayloadInterface;
 
         if (!is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
         }
 
-        if (typeof start !== "number" || typeof limit !== "number") {
-            throw new Error("MISSING_START_LIMIT");
+        if (!start && typeof start !== "number") {
+            throw new MissingPropertyError("Property 'start' is missing.");
+        }
+
+        if (!limit && typeof limit !== "number") {
+            throw new MissingPropertyError("Property 'limit' is missing.");
+        }
+
+        if (typeof start !== "number") {
+            throw new PropertyTypeError(
+                `given 'start' property is of type ${typeof start} but expected type is 'number'`
+            );
+        }
+
+        if (typeof limit !== "number") {
+            throw new PropertyTypeError(
+                `given 'limit' property is of type ${typeof limit} but expected type is 'number'`
+            );
         }
 
         const instances =

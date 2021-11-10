@@ -15,6 +15,13 @@ import { ItemInstanceUpdatedEvent } from "../../events/item";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { joiPayloadValidator } from "../../utils";
+import {
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    SchemaValidationError,
+    UnknownItemError
+} from "../../errors";
 
 interface UpdateItemInstancePrivatePayloadInterface extends ItemInstance {
     is_studio: boolean;
@@ -40,10 +47,17 @@ export class UpdateItemInstanceAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<ItemInstance> {
-        await itemUpdateSchema.validateAsync(msg.body);
-
         if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
+        try {
+            await itemInstanceUpdateSchema.validateAsync(msg.body);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `UpdateItemInstance -- ${(error as Error).message}`,
+                error as Error
+            );
         }
 
         const itemInstance = new ItemInstance(msg.body as ItemInstance);
@@ -97,33 +111,37 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
             msg.data as UpdateItemInstancePrivatePayloadInterface;
 
         if (!is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
         }
 
         if (!data) {
-            throw new Error("UNDEFINED_DATA");
+            throw new MissingPropertyError("Property 'data' is missing.");
         }
 
         if (!item_id) {
-            throw new Error("UNDEFINED_ITEM_ID");
+            throw new MissingPropertyError("Property 'item_id' is missing.");
         }
 
         if (!instance_number) {
-            throw new Error("UNDEFINED_INSTANCE_NUMBER");
+            throw new MissingPropertyError(
+                "Property 'instance_number' is missing."
+            );
         }
 
         const item = await this.itemRepository.getItem(item_id);
 
         if (!item) {
-            throw new Error(`Item with id ${item_id} does not exist.`);
+            throw new UnknownItemError(`Item ID: ${item_id}.`);
         }
 
         if (item.studio_id !== studio_id) {
-            throw new Error("Invalid studio, you cannot update this item.");
+            throw new InvalidStudioError(
+                `Item with id ${item_id} does not belong to your studio.`
+            );
         }
 
         const updatedInstance =
@@ -159,7 +177,7 @@ export class UpdateItemInstanceHandler extends PrivateHandler {
     }
 }
 
-export const itemUpdateSchema = Joi.object({
+export const itemInstanceUpdateSchema = Joi.object({
     item_id: Joi.number().min(0).required(),
     instance_number: Joi.number().min(0).required(),
     data: Joi.object()

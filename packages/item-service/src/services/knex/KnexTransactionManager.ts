@@ -1,4 +1,5 @@
 import { Knex } from "knex";
+import { SQLTransactionError } from "../../errors";
 
 export class KnexTransactionManager {
     private transactionProvider?: Knex.TransactionProvider;
@@ -35,7 +36,10 @@ export class KnexTransactionManager {
         } catch (error) {
             console.error(`An error occurred in the SQL transaction: ${error}`);
             await transaction.rollback();
-            throw new Error((error as Error).message);
+            throw new SQLTransactionError(
+                (error as Error).message,
+                error as Error
+            );
         }
 
         return callbackResult;

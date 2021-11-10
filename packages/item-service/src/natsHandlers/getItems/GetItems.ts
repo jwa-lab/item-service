@@ -12,6 +12,12 @@ import {
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { GetItemsInterface } from "../../repositories/KnexItemRepository";
 import Joi from "joi";
+import {
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    PropertyTypeError,
+    SchemaValidationError
+} from "../../errors";
 
 interface GetItemsPrivatePayloadInterface {
     start: number;
@@ -44,16 +50,23 @@ export class GetItemsAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<GetItemsInterface> {
+        if (!isStudio(msg.headers)) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
         const { start, limit } = msg.query as unknown as GetItemsQueryInterface;
         const parsedQuery = {
             start: Number(start) || 0,
             limit: typeof limit !== "undefined" ? Number(limit) : 10
         };
 
-        await getItemsSchema.validateAsync(parsedQuery);
-
-        if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+        try {
+            await getItemsSchema.validateAsync(parsedQuery);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `GetItems -- ${(error as Error).message}`,
+                error as Error
+            );
         }
 
         this.logger.info(`Getting items ${msg.headers.studio_id}`);
@@ -92,11 +105,31 @@ export class GetItemsHandler extends PrivateHandler {
             msg.data as GetItemsPrivatePayloadInterface;
 
         if (!is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
+        }
+
+        if (!start && typeof start !== "number") {
+            throw new MissingPropertyError("Property 'start' is missing.");
+        }
+
+        if (!limit && typeof limit !== "number") {
+            throw new MissingPropertyError("Property 'limit' is missing.");
+        }
+
+        if (typeof start !== "number") {
+            throw new PropertyTypeError(
+                `given 'start' property is of type ${typeof start} but expected type is 'number'`
+            );
+        }
+
+        if (typeof limit !== "number") {
+            throw new PropertyTypeError(
+                `given 'limit' property is of type ${typeof limit} but expected type is 'number'`
+            );
         }
 
         return this.itemRepository.getItems(start, limit, studio_id);

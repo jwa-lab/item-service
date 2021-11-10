@@ -2,7 +2,12 @@ import { KnexTransactionManager } from "../services/knex/KnexTransactionManager"
 import { Item, SavedItem } from "../entities/item";
 
 import { ItemRepository, ItemTezosTokenizationInfo } from "./ItemRepository";
-import { SQLUpdateNoRowsAffected } from "../errors";
+import {
+    FrozenItemError,
+    InvalidStudioError,
+    SQLUpdateNoRowsAffected,
+    UnknownItemError
+} from "../errors";
 
 export interface GetItemsInterface {
     results: Item[];
@@ -28,15 +33,17 @@ export class KnexItemRepository implements ItemRepository {
         const existingItem = await this.getItem(item.item_id);
 
         if (!existingItem) {
-            throw new Error(`Item with id ${item.item_id} does not exist.`);
+            throw new UnknownItemError(`Item ID: ${item.item_id}.`);
         }
 
         if (existingItem.studio_id !== item.studio_id) {
-            throw new Error("Invalid studio, you cannot update this item.");
+            throw new InvalidStudioError(
+                `Item with id ${item.item_id} does not belong to your studio.`
+            );
         }
 
         if (existingItem.frozen) {
-            throw new Error("Cannot update this item. Item is frozen.");
+            throw new FrozenItemError(`Item ID: ${item.item_id}.`);
         }
 
         const result = await queryClient<SavedItem>(this.itemTable)
@@ -74,7 +81,10 @@ export class KnexItemRepository implements ItemRepository {
     ): Promise<GetItemsInterface> {
         const queryClient = await this.transactionManager.getProvider();
 
-        const totalQuery = await queryClient(this.itemTable).count("*").first();
+        const totalQuery = await queryClient(this.itemTable)
+            .where({ studio_id })
+            .count("*")
+            .first();
 
         const results = await queryClient<Item>(this.itemTable)
             .select()

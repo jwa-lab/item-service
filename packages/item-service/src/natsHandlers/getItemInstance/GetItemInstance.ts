@@ -13,6 +13,14 @@ import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepositor
 import { ItemInstance } from "../../entities/itemInstance";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import Joi from "joi";
+import {
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    SchemaValidationError,
+    UnknownItemError,
+    UnknownItemInstanceError
+} from "../../errors";
 
 interface GetItemInstancePrivatePayloadInterface {
     item_id: number;
@@ -41,13 +49,23 @@ export class GetItemInstanceAirlockHandler extends AirlockHandler {
 
     async handle(msg: AirlockMessage): Promise<ItemInstance> {
         if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         const item_id = Number(msg.subject.split(".")[2]);
         const instance_number = Number(msg.subject.split(".")[3]);
 
-        await getItemInstanceSchema.validateAsync({ item_id, instance_number });
+        try {
+            await getItemInstanceSchema.validateAsync({
+                item_id,
+                instance_number
+            });
+        } catch (error) {
+            throw new SchemaValidationError(
+                `GetItemInstance -- ${(error as Error).message}`,
+                error as Error
+            );
+        }
 
         this.logger.info(
             `Getting item instance [item: ${item_id}, instance: ${instance_number}]`
@@ -89,25 +107,33 @@ export class GetItemInstanceHandler extends PrivateHandler {
             msg.data as GetItemInstancePrivatePayloadInterface;
 
         if (!item_id) {
-            throw new Error("Invalid item_id.");
+            throw new MissingPropertyError("Property 'item_id' is missing.");
         }
 
         if (!instance_number) {
-            throw new Error("Invalid instance_number.");
+            throw new MissingPropertyError(
+                "Property 'instance_number' is missing."
+            );
         }
 
         if (!is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
+        if (!studio_id) {
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
         }
 
         const requiredItem = await this.itemRepository.getItem(item_id);
 
         if (!requiredItem) {
-            throw new Error(`Item with id ${item_id} does not exist.`);
+            throw new UnknownItemError(`Item ID: ${item_id}.`);
         }
 
         if (requiredItem.studio_id !== studio_id) {
-            throw new Error("INVALID_STUDIO_ID");
+            throw new InvalidStudioError(
+                `Item with id ${item_id} does not belong to your studio.`
+            );
         }
 
         const fetchedInstance = await this.itemInstanceRepository.getInstance(
@@ -116,7 +142,7 @@ export class GetItemInstanceHandler extends PrivateHandler {
         );
 
         if (!fetchedInstance) {
-            throw new Error(
+            throw new UnknownItemInstanceError(
                 `No instance match for [item: ${item_id}, instance: ${instance_number}]`
             );
         }

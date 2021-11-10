@@ -15,7 +15,13 @@ import { SavedItem } from "../../entities/item";
 import { ItemFrozenEvent } from "../../events/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { KnexTransactionManager } from "../../services/knex/KnexTransactionManager";
-import { SchemaValidationError } from "../../errors";
+import {
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    SchemaValidationError,
+    UnknownItemError
+} from "../../errors";
 
 export class FreezeItemAirlockHandler extends AirlockHandler {
     readonly subject = "freeze-item";
@@ -36,6 +42,10 @@ export class FreezeItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<SavedItem> {
+        if (!isStudio(msg.headers)) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
         try {
             await itemFreezeSchema.validateAsync(msg.body);
         } catch (error) {
@@ -43,10 +53,6 @@ export class FreezeItemAirlockHandler extends AirlockHandler {
                 `FreezeItem -- ${(error as Error).message}`,
                 error as Error
             );
-        }
-
-        if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
         }
 
         const { item_id } = msg.body as Pick<SavedItem, "item_id">;
@@ -93,15 +99,15 @@ export class FreezeItemHandler extends PrivateHandler {
         };
 
         if (!is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
         }
 
         if (!item_id) {
-            throw new Error("MISSING_ITEM_ID");
+            throw new MissingPropertyError("Property 'item_id' is missing.");
         }
 
         const [item, statusChanged] = await this.transactionManager.transaction<
@@ -110,13 +116,15 @@ export class FreezeItemHandler extends PrivateHandler {
             const fetchedItem = await this.itemRepository.getItem(item_id);
 
             if (!fetchedItem) {
-                throw new Error(
+                throw new UnknownItemError(
                     `Can't freeze item ${item_id}, item doesn't exist.`
                 );
             }
 
             if (fetchedItem.studio_id !== studio_id) {
-                throw new Error("Invalid studio, you cannot freeze this item.");
+                throw new InvalidStudioError(
+                    `Unable to freeze item with id ${item_id}. The item does not belong to your studio.`
+                );
             }
 
             if (!fetchedItem.frozen) {
