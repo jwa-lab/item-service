@@ -10,7 +10,9 @@ interface AirlockJWT {
 
 export function parseJwtToNats(jwt: string): MsgHdrs {
     if (!jwt) {
-        throw new Error("INVALID_JWT");
+        throw new Error(
+            "Invalid token type provided. Details: A studio token is expected."
+        );
     }
 
     const cleanJwt = jwt.replace(/Bearer /g, "");

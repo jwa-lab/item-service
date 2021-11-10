@@ -26,6 +26,7 @@ describe("Given CreateItem  Handler", () => {
         beforeEach(async () => {
             itemRepository.addItem.mockReturnValue({
                 item_id: 1,
+                studio_id: "studio_abcd",
                 name: "hello",
                 total_quantity: 10,
                 available_quantity: 10,
@@ -36,6 +37,7 @@ describe("Given CreateItem  Handler", () => {
             response = await createItemHandler.handle({
                 data: {
                     name: "hello",
+                    studio_id: "studio_abcd",
                     total_quantity: 10,
                     available_quantity: 10,
                     data: {},
@@ -47,6 +49,7 @@ describe("Given CreateItem  Handler", () => {
         it("Then adds the item to the repository", () => {
             expect(itemRepository.addItem.mock.calls[0][0]).toEqual({
                 name: "hello",
+                studio_id: "studio_abcd",
                 total_quantity: 10,
                 available_quantity: 10,
                 data: {},
@@ -58,6 +61,7 @@ describe("Given CreateItem  Handler", () => {
             expect(response).toEqual({
                 item_id: 1,
                 name: "hello",
+                studio_id: "studio_abcd",
                 total_quantity: 10,
                 available_quantity: 10,
                 data: {},

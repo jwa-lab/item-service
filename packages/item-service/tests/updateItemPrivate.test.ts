@@ -21,6 +21,15 @@ describe("Given UpdateItem Handler", () => {
                 available_quantity: 7,
                 data: {},
                 frozen: false
+            }),
+            getItem: jest.fn().mockReturnValue({
+                is_studio: true,
+                studio_id: "studio_id",
+                item_id: 1,
+                name: "name",
+                total_quantity: 10,
+                data: {},
+                frozen: false
             })
         };
 
