@@ -1,14 +1,13 @@
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
-
+import { Logger } from "@jwalab/logger";
 import {
     AIRLOCK_VERBS,
     AirlockHandler,
     AirlockMessage,
     isStudio,
-    Logger,
     Message,
     PrivateHandler
-} from "@jwalab/js-common";
+} from "@jwalab/nats-runner";
 
 import { SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";

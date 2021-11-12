@@ -1,7 +1,7 @@
 import { TezosToolkit } from "@taquito/taquito";
 import { InMemorySigner } from "@taquito/signer";
 
-import { Logger } from "@jwalab/js-common";
+import { Logger } from "@jwalab/logger";
 
 export function makeTezosClient(
     logger: Logger,

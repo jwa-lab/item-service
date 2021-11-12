@@ -5,8 +5,8 @@ import {
     withKind
 } from "@taquito/taquito";
 import { BlockResponse } from "@taquito/rpc";
-
-import { JetStreamMessage, Logger, JetStreamConsumer } from "@jwalab/js-common";
+import { Logger } from "@jwalab/logger";
+import { JetStreamMessage, JetStreamConsumer } from "@jwalab/nats-runner";
 
 import {
     consumerOpts,

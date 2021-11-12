@@ -1,4 +1,4 @@
-import { EventBusEvent } from "@jwalab/js-common";
+import { EventBusEvent } from "@jwalab/event-bus";
 
 export class ItemCreatedEvent implements EventBusEvent {
     name = "ItemCreatedEvent";
