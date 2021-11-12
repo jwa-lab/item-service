@@ -29,7 +29,9 @@ describe("Given GetItems Handler", () => {
                         is_studio: false
                     }
                 })
-            ).rejects.toThrow("INVALID_JWT_STUDIO");
+            ).rejects.toThrow(
+                "Invalid token type provided. Details: A studio token is expected."
+            );
         });
     });
 

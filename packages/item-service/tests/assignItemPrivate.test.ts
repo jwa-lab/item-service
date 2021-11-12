@@ -68,7 +68,9 @@ describe("Given AssignItem Handler", () => {
                         user_id: "test_user_id"
                     }
                 })
-            ).rejects.toThrow("STUDIO_ID_MISSING");
+            ).rejects.toThrow(
+                "Missing property. Details: Property 'studio_id' is missing."
+            );
         });
     });
 
@@ -83,7 +85,9 @@ describe("Given AssignItem Handler", () => {
                         user_id: "test_user_id"
                     }
                 })
-            ).rejects.toThrow("INVALID_JWT_STUDIO");
+            ).rejects.toThrow(
+                "Invalid token type provided. Details: A studio token is expected."
+            );
         });
     });
 
@@ -97,7 +101,9 @@ describe("Given AssignItem Handler", () => {
                         item_id: 1
                     }
                 })
-            ).rejects.toThrow("USER_ID_MISSING");
+            ).rejects.toThrow(
+                "Missing property. Details: Property 'user_id' is missing."
+            );
         });
     });
 
@@ -111,7 +117,9 @@ describe("Given AssignItem Handler", () => {
                         user_id: "test_user_id"
                     }
                 })
-            ).rejects.toThrow("MISSING_ITEM_ID");
+            ).rejects.toThrow(
+                "Missing property. Details: Property 'item_id' is missing."
+            );
         });
     });
 

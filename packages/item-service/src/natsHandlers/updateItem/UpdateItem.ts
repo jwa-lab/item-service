@@ -17,6 +17,15 @@ import { ItemUpdatedEvent } from "../../events/item";
 import { KnexTransactionManager } from "../../services/knex/KnexTransactionManager";
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";
 import { joiPayloadValidator } from "../../utils";
+import {
+    FrozenItemError,
+    InvalidStudioError,
+    InvalidTokenTypeError,
+    ItemQuantityError,
+    MissingPropertyError,
+    SchemaValidationError,
+    UnknownItemError
+} from "../../errors";
 
 interface UpdateItemPrivatePayloadInterface extends SavedItem {
     is_studio: boolean;
@@ -42,15 +51,22 @@ export class UpdateItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<SavedItem> {
+        if (!isStudio(msg.headers)) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
         const updatedFields = msg.body as Pick<
             SavedItem,
             "item_id" | "frozen" | "data" | "total_quantity" | "name"
         >;
 
-        await itemUpdateSchema.validateAsync(updatedFields);
-
-        if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+        try {
+            await itemUpdateSchema.validateAsync(updatedFields);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `UpdateItem -- ${(error as Error).message}`,
+                error as Error
+            );
         }
 
         const payload = {
@@ -94,11 +110,27 @@ export class UpdateItemHandler extends PrivateHandler {
         const data = msg.data as UpdateItemPrivatePayloadInterface;
 
         if (!data.is_studio) {
-            throw new Error("INVALID_JWT_STUDIO");
+            throw new InvalidTokenTypeError("A studio token is expected.");
         }
 
         if (!data.studio_id) {
-            throw new Error("STUDIO_ID_MISSING");
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
+        }
+
+        const item = await this.itemRepository.getItem(data.item_id);
+
+        if (!item) {
+            throw new UnknownItemError(`Item ID: ${data.item_id}.`);
+        }
+
+        if (item.studio_id !== data.studio_id) {
+            throw new InvalidStudioError(
+                `Item with id ${data.item_id} does not belong to your studio.`
+            );
+        }
+
+        if (item.frozen) {
+            throw new FrozenItemError(`Item ID: ${data.item_id}.`);
         }
 
         const transactionResult = await this.transactionManager.transaction<
@@ -113,9 +145,7 @@ export class UpdateItemHandler extends PrivateHandler {
             );
 
             if (total > data.total_quantity) {
-                throw new Error(
-                    "Item's total_quantity can't be less than number of already assigned instances."
-                );
+                throw new ItemQuantityError(`Item ID: ${data.item_id}.`);
             }
 
             const item = await this.itemRepository.updateItem(

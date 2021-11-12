@@ -14,6 +14,11 @@ import {
 import { Item, SavedItem } from "../../entities/item";
 import { ItemRepository } from "../../repositories/ItemRepository";
 import { ItemCreatedEvent } from "../../events/item";
+import {
+    InvalidTokenTypeError,
+    MissingPropertyError,
+    SchemaValidationError
+} from "../../errors";
 import { joiPayloadValidator } from "../../utils";
 
 export class CreateItemAirlockHandler extends AirlockHandler {
@@ -35,15 +40,22 @@ export class CreateItemAirlockHandler extends AirlockHandler {
     }
 
     async handle(msg: AirlockMessage): Promise<SavedItem> {
+        if (!isStudio(msg.headers)) {
+            throw new InvalidTokenTypeError("A studio token is expected.");
+        }
+
         const payload = msg.body as Pick<
             Item,
             "frozen" | "data" | "total_quantity" | "name"
         >;
 
-        await itemCreateSchema.validateAsync(payload);
-
-        if (!isStudio(msg.headers)) {
-            throw new Error("Invalid token type, a studio token is required.");
+        try {
+            await itemCreateSchema.validateAsync(payload);
+        } catch (error) {
+            throw new SchemaValidationError(
+                `CreateItem -- ${(error as Error).message}`,
+                error as Error
+            );
         }
 
         const item = new Item({
@@ -82,9 +94,13 @@ export class CreateItemHandler extends PrivateHandler {
     }
 
     async handle(msg: Message): Promise<SavedItem> {
-        const item = await this.itemRepository.addItem(
-            new Item(msg.data as Item)
-        );
+        const itemData = msg.data as Item;
+
+        if (!itemData.studio_id) {
+            throw new MissingPropertyError("Property 'studio_id' is missing.");
+        }
+
+        const item = await this.itemRepository.addItem(new Item(itemData));
 
         this.logger.info(`item added with id ${item.item_id}`);
 

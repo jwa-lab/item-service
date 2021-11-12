@@ -47,7 +47,7 @@ describe("Given GetItems Airlock Handler", () => {
                     }
                 })
             ).rejects.toThrow(
-                "Invalid token type, a studio token is required."
+                "Invalid token type provided. Details: A studio token is expected."
             );
         });
     });

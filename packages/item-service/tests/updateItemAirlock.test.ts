@@ -41,7 +41,7 @@ describe("Given UpdateItem Airlock Handler", () => {
                     }
                 })
             ).rejects.toThrow(
-                "Invalid token type, a studio token is required."
+                "Invalid token type provided. Details: A studio token is expected."
             );
         });
     });
@@ -155,7 +155,7 @@ describe("Given UpdateItem Airlock Handler", () => {
                     headers: DEFAULT_STUDIO_HEADERS
                 })
             ).rejects.toThrow(
-                "Maximum payload size exceeded, got 11004 bytes but maximum is 10000 bytes."
+                "Invalid data provided, please check your payload. Details: UpdateItem -- Maximum payload size exceeded. Details: Got 11004 bytes but maximum is 10000 bytes."
             );
         });
     });

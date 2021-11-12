@@ -45,7 +45,9 @@ describe("Given GetItemInstance Handler", () => {
                         is_studio: true
                     }
                 })
-            ).rejects.toThrow("INVALID_STUDIO_ID");
+            ).rejects.toThrow(
+                "Invalid studio, you cannot update this item. Details: Item with id 1 does not belong to your studio."
+            );
         });
     });
 

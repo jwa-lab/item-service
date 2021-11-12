@@ -38,7 +38,9 @@ describe("Given FreezeItem Handler", () => {
                         item_id: 1
                     }
                 })
-            ).rejects.toThrow("STUDIO_ID_MISSING");
+            ).rejects.toThrow(
+                "Missing property. Details: Property 'studio_id' is missing."
+            );
         });
     });
 
@@ -52,7 +54,9 @@ describe("Given FreezeItem Handler", () => {
                         item_id: 1
                     }
                 })
-            ).rejects.toThrow("INVALID_JWT_STUDIO");
+            ).rejects.toThrow(
+                "Invalid token type provided. Details: A studio token is expected."
+            );
         });
     });
 
@@ -65,7 +69,9 @@ describe("Given FreezeItem Handler", () => {
                         studio_id: "studio_id"
                     }
                 })
-            ).rejects.toThrow("MISSING_ITEM_ID");
+            ).rejects.toThrow(
+                "Missing property. Details: Property 'item_id' is missing."
+            );
         });
     });
 
@@ -219,7 +225,9 @@ describe("Given FreezeItem Handler", () => {
                         item_id: 1
                     }
                 })
-            ).rejects.toThrow("Invalid studio, you cannot freeze this item.");
+            ).rejects.toThrow(
+                "Invalid studio, you cannot update this item. Details: Unable to freeze item with id 1. The item does not belong to your studio."
+            );
         });
     });
 });

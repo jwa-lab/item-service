@@ -1,1 +1,1 @@
-export { SQLUpdateNoRowsAffected } from "./SQLUpdateNoRowsAffected";
+export * from "./JWAError";
