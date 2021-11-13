@@ -1,4 +1,4 @@
-import { JWAError } from "@jwalab/js-common";
+import { JWAError } from "@jwalab/errors";
 
 export class SchemaValidationError extends JWAError {
     constructor(message: string, origin?: Error) {

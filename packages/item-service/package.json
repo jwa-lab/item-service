@@ -34,6 +34,7 @@
         "typescript": "^4.4"
     },
     "dependencies": {
+        "@jwalab/errors": "file:../../../js-common/packages/errors",
         "@jwalab/event-bus": "file:../../../js-common/packages/event-bus",
         "@jwalab/logger": "file:../../../js-common/packages/logger",
         "@jwalab/nats-runner": "file:../../../js-common/packages/nats-runner",
