@@ -1,5 +1,6 @@
 import { consumerOpts, ConsumerOptsBuilder, createInbox } from "nats";
-import { JetStreamConsumer, JetStreamMessage, Logger } from "@jwalab/js-common";
+import { Logger } from "@jwalab/logger";
+import { JetStreamConsumer, JetStreamMessage } from "@jwalab/nats-runner";
 import { TezosWorkerTokenizationConfirmation } from "@jwalab/tezos-work-queue";
 
 import { ItemInstanceRepository } from "../../repositories/ItemInstanceRepository";

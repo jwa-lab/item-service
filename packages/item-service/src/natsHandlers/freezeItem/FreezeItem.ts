@@ -1,13 +1,13 @@
+import { EventBus } from "@jwalab/event-bus";
+import { Logger } from "@jwalab/logger";
 import {
-    AIRLOCK_VERBS,
     AirlockHandler,
     AirlockMessage,
-    EventBus,
+    AIRLOCK_VERBS,
     isStudio,
-    Logger,
     Message,
     PrivateHandler
-} from "@jwalab/js-common";
+} from "@jwalab/nats-runner";
 import Joi from "joi";
 import { JSONCodec, NatsConnection, SubscriptionOptions } from "nats";
 

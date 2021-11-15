@@ -1,4 +1,4 @@
-import { JWAError } from "@jwalab/js-common";
+import { JWAError } from "@jwalab/errors";
 
 export class OutOfStockError extends JWAError {
     constructor(message: string, origin?: Error) {

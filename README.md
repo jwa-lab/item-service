@@ -33,12 +33,6 @@ Each package has an alias `ln -s` of the top-level .env and will be able to reus
 npm install
 ```
 
-Then make sure the common code is available for all to use:
-
-```
-npm run build -w @jwalab/js-common
-```
-
 ### Run
 
 First, start minilab

@@ -1,1 +1,1 @@
-export { EventEmitterEventBus } from "@jwalab/js-common";
+export { EventEmitterEventBus } from "@jwalab/event-bus";

@@ -4,7 +4,7 @@ import {
     JSONCodec,
     NatsConnection
 } from "nats";
-import { Logger } from "@jwalab/js-common";
+import { Logger } from "@jwalab/logger";
 import { MichelsonMap, OpKind, TransferParams } from "@taquito/taquito";
 
 import {
