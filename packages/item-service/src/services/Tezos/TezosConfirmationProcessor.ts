@@ -32,7 +32,7 @@ export class TezosConfirmationProcessor extends JetStreamConsumer {
 
         subscriptionOptions.durable("tezos-confirmation-processor");
         // if multiple instances of this consumer, the queue ensures load balancing
-        subscriptionOptions.queue("tezos-confirmation-processor");
+        //subscriptionOptions.queue("tezos-confirmation-processor");
         subscriptionOptions.manualAck();
         subscriptionOptions.ackExplicit();
         subscriptionOptions.deliverTo(createInbox());

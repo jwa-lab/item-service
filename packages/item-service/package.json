@@ -34,10 +34,10 @@
         "typescript": "^4.4"
     },
     "dependencies": {
-        "@jwalab/errors": "file:../../../js-common/packages/errors",
-        "@jwalab/event-bus": "file:../../../js-common/packages/event-bus",
-        "@jwalab/logger": "file:../../../js-common/packages/logger",
-        "@jwalab/nats-runner": "file:../../../js-common/packages/nats-runner",
+        "@jwalab/errors": "*",
+        "@jwalab/event-bus": "*",
+        "@jwalab/logger": "*",
+        "@jwalab/nats-runner": "*",
         "@jwalab/tokenization-service-contracts": "^0.1.1",
         "@taquito/signer": "^10.1.2",
         "@taquito/taquito": "^10.1.2",
