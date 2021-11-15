@@ -25,7 +25,7 @@
     },
     "dependencies": {
         "@jwalab/logger": "0.0.1",
-        "@jwalab/nats-runner": "0.0.1",
+        "@jwalab/nats-runner": "0.0.2",
         "@taquito/signer": "^10.1.2",
         "@taquito/taquito": "^10.1.2",
         "@taquito/utils": "^10.1.0",
