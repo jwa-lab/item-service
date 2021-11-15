@@ -12,7 +12,6 @@
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\""
     },
     "devDependencies": {
-        "@jwalab/js-common": "*",
         "@taquito/rpc": "^10.1.3",
         "@tsconfig/node14": "^1.0.1",
         "@typescript-eslint/eslint-plugin": "^4.4",
@@ -25,6 +24,8 @@
         "typescript": "^4.4"
     },
     "dependencies": {
+        "@jwalab/logger": "0.0.1",
+        "@jwalab/nats-runner": "0.0.1",
         "@taquito/signer": "^10.1.2",
         "@taquito/taquito": "^10.1.2",
         "@taquito/utils": "^10.1.0",
