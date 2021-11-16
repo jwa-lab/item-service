@@ -31,8 +31,7 @@ jobs:
             - run: npm run build -w @jwalab/tezos-work-queue
             - run: npm publish -w @jwalab/tezos-work-queue --access=public || true
     docker-push:
-        machine:
-            image: ubuntu-2004:202107-02
+        machine: true
         steps:
             - checkout
             - run: ./run docker-build
