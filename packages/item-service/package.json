@@ -34,7 +34,7 @@
         "typescript": "^4.4"
     },
     "dependencies": {
-        "@jwalab/errors": "0.0.1",
+        "@jwalab/errors": "0.0.2",
         "@jwalab/event-bus": "0.0.1",
         "@jwalab/logger": "0.0.1",
         "@jwalab/nats-runner": "0.0.2",
