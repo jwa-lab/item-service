@@ -28,8 +28,8 @@ jobs:
                   name: Authenticate with NPM
                   command: echo "//registry.npmjs.org/:_authToken=${NPM_JWALAB_ORGANIZATION_API_TOKEN}" > ~/.npmrc
             - run: npm install
-            - run: npm run build -w @jwalab/tezos-work-queue
-            - run: npm publish -w @jwalab/tezos-work-queue --access=public || true
+            - run: npm run build -w @jwalab/tezos-gateway
+            - run: npm publish -w @jwalab/tezos-gateway --access=public || true
     docker-push:
         machine: true
         steps:

@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-services="item-service tezos-work-queue"
+services="item-service tezos-gateway"
 
 function docker-build() {
     for service in ${services[@]}
