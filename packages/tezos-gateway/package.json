@@ -38,6 +38,7 @@
         "@taquito/taquito": "^10.1.2",
         "@taquito/utils": "^10.1.0",
         "dotenv": "^10.0.0",
-        "nats": "^2.4.0"
+        "nats": "^2.4.0",
+        "newrelic": "^8.6.0"
     }
 }
