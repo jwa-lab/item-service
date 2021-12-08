@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+require("newrelic");
+
 import { NatsRunner } from "@jwalab/nats-runner";
 
 export { TezosWorkerTokenizationConfirmation } from "./types";

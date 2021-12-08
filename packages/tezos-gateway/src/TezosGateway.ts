@@ -45,7 +45,7 @@ export class TezosGateway extends JetStreamPullConsumerHandler {
 
         for await (const hasBlockHashChanged of this.tezosBlockMonitor.blockHashChanged()) {
             if (hasBlockHashChanged) {
-                this.logger.info(`Block hash has changed, processing batch.`);
+                this.logger.debug(`Block hash has changed, processing batch.`);
                 await this.processBatch();
                 this.pullNext();
             }
@@ -124,7 +124,7 @@ export class TezosGateway extends JetStreamPullConsumerHandler {
     }
 
     private async processBatch(): Promise<void> {
-        this.logger.info("Processing batch");
+        this.logger.debug("Processing batch");
         this.isProcessing = true;
 
         const { success, opHash, batch } =
@@ -137,7 +137,7 @@ export class TezosGateway extends JetStreamPullConsumerHandler {
         }
 
         this.isProcessing = false;
-        this.logger.info("Done processing batch");
+        this.logger.debug("Done processing batch");
     }
 
     private failedToProcessBatch(batch: Batch) {
