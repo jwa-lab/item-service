@@ -6,26 +6,12 @@ Items can be created, assigned to users and may evolve each at their own pace.
 
 ## Setup
 
-Start by creating a `.env` file in this project's top level folderwith the following configuration:
+Copy the `.env.dist` files to `.env`:
 
 ```
-# in .env
-SERVICE_NAME=item-service
-NATS_URL=nats://localhost:4222
-TEZOS_RPC_URI=http://localhost:20000
-TEZOS_SECRET_KEY=edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq
-TEZOS_PUBLIC_KEY_HASH=tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb
-WAREHOUSE_CONTRACT_ADDRESS=KT1NxT1X7H95ECnGkCGRywmzYencNe2sQS2i
-LOGGING_FORMAT=cli
-PGSQL_HOST=localhost
-PGSQL_USER=jwa
-PGSQL_PASSWORD=jwalab
-PGSQL_DATABASE=item
+cp packages/item-service/.env.dist packages/item-service/.env
+cp packages/tezos-gateway/.env.dist packages/tezos-gateway/.env
 ```
-
-Those values aren't private, feel free to use them by default on your local environment.
-Also note that those are all the environment variables used in the various packages.
-Each package has an alias `ln -s` of the top-level .env and will be able to reuse them.
 
 ### Install
 
@@ -59,7 +45,7 @@ Deploy the Warehouse contract:
 npm run deploy-warehouse -w @jwalab/item-service
 ```
 
-Notice the new contract address and paste it in the `.env` file under `WAREHOUSE_CONTRACT_ADDRESS`
+Notice the new contract address and paste it in the `packages/item-service/.env` file under `WAREHOUSE_CONTRACT_ADDRESS`
 
 Start the `item-service`
 
