@@ -1,13 +1,23 @@
+import { Logger } from "@jwalab/logger";
 import TezosBlockMonitor from "../src/TezosBlockMonitor";
 
 describe("Given initialized TezosBlockMonitor", () => {
     let tezosBlockMonitor;
-    let logger;
+    let logger: Logger;
     let tezosClient;
     let blockResponse;
 
     beforeEach(() => {
-        logger = { info: jest.fn() };
+        logger = {
+            emerg: jest.fn(),
+            alert: jest.fn(),
+            crit: jest.fn(),
+            error: jest.fn(),
+            warning: jest.fn(),
+            notice: jest.fn(),
+            info: jest.fn(),
+            debug: jest.fn()
+        };
         tezosClient = {
             rpc: {
                 getBlock: () => Promise.resolve(blockResponse)
