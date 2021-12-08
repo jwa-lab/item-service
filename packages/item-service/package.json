@@ -37,8 +37,8 @@
     "dependencies": {
         "@jwalab/errors": "0.0.2",
         "@jwalab/event-bus": "0.0.1",
-        "@jwalab/logger": "0.0.1",
-        "@jwalab/nats-runner": "0.0.4",
+        "@jwalab/logger": "0.0.2",
+        "@jwalab/nats-runner": "0.0.5",
         "@jwalab/tokenization-service-contracts": "0.1.1",
         "@taquito/signer": "^10.1.2",
         "@taquito/taquito": "^10.1.2",

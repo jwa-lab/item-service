@@ -35,7 +35,7 @@ export default class TezosBlockMonitor {
         if (blockHash !== this.blockHash) {
             this.blockHash = blockHash;
 
-            this.logger.info(
+            this.logger.debug(
                 `TezosBlockMonitor block changed with hash ${blockHash}`
             );
 

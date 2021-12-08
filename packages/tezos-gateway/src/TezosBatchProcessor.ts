@@ -162,7 +162,7 @@ export default class TezosBatchProcessor {
         const batch = this.currentBatch;
 
         if (batch.isEmpty()) {
-            this.logger.info(`Emtpy batch, ignoring.`);
+            this.logger.debug(`Emtpy batch, ignoring.`);
             return {
                 success: false,
                 opHash: "",
@@ -179,7 +179,7 @@ export default class TezosBatchProcessor {
         );
 
         try {
-            this.logger.info(`Sending batch`);
+            this.logger.debug(`Sending batch`);
 
             const { opHash } = await batchOperation.send();
 
